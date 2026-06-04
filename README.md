@@ -1,6 +1,6 @@
-# Topic Modeling Guide
+# Topic Modeling Recipes
 
-A practitioner's guide to unsupervised thematic analysis of large text corpora — covering the full pipeline from preprocessing through annotation, evaluation and large-scale extrapolation.
+A collection of practical recipes to unsupervised thematic analysis of large text corpora — covering the full pipeline from preprocessing through annotation, evaluation and large-scale extrapolation.
 
 Built from real-world experience applying topic modeling across multilingual social media and news corpora in research and applied NLP contexts.
 
