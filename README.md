@@ -8,6 +8,63 @@ Documents are self-contained. If you already know topic modelling, go directly t
 
 ---
 
+## Pipeline Overview
+
+```mermaid
+flowchart TD
+    A([Start: New Project]) --> B
+
+    B["📋 Data Collection\ndocs/data-collection"]
+    B --> C{Data scope\nfinalised?}
+    C -->|No — scope\nstill open| B
+    C -->|Yes| D
+
+    D["⚙️ Preprocessing\ndocs/workflow"]
+    D --> E{Multilingual\ndata?}
+    E -->|Yes| F["🌐 Translation decision\ndocs/translation"]
+    E -->|No| G
+    F --> G
+
+    G["🔢 Embedding extraction\ndocs/workflow"]
+    G --> H{Large\ndataset?}
+    H -->|Yes| I["📊 Sampling strategy\ndocs/sampling"]
+    H -->|No| J
+    I --> J
+
+    J["🗂️ Topic modelling\nUMAP + HDBSCAN"]
+    J --> K{Predefined\ncategories?}
+    K -->|Yes| L["🎯 Guided topic modelling\ndocs/guided"]
+    K -->|No| M
+    L --> M
+
+    M{-1 cluster\nsignificant?}
+    M -->|Yes| N["🔍 Outlier mitigation\ndocs/outliers"]
+    M -->|No| O
+    N --> O
+
+    O["✏️ Thematic allocation\n& annotation\ndocs/annotation"]
+    O --> P{Topics\nheterogeneous?}
+    P -->|Yes| Q["🔁 Layered modelling\ndocs/layered"]
+    P -->|No| R
+    Q --> R
+
+    R["✅ Evaluation\ndocs/evaluation"]
+    R --> S{Performance\nacceptable?}
+    S -->|No — revise\nallocation| O
+    S -->|Yes| T([Analysis & Reporting])
+
+    classDef process fill:#ffffff,stroke:#1B1A18,stroke-width:1.5px,color:#1B1A18
+    classDef decision fill:#C8A876,stroke:#1B1A18,stroke-width:1.5px,color:#1B1A18,font-weight:bold
+    classDef terminal fill:#1B1A18,stroke:#1B1A18,color:#ffffff,stroke-width:1.5px
+    classDef data fill:#F4EFE5,stroke:#1B1A18,stroke-width:1.5px,color:#1B1A18
+
+    class B,D,G,I,J,L,N,O,Q,R process
+    class C,E,H,K,M,P,S decision
+    class A,T terminal
+```
+
+---
+
 ## Contents
 
 | Section | What it covers |
