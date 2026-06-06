@@ -34,17 +34,17 @@ In practice this has been observed as a significant issue on large datasets and 
 
 ### UMAP's extrapolation limitation
 
-UMAP learns a reduced embedding space from the training data, preserving the density structure of that specific sample. When new data points are projected into this learned space, UMAP must place them based on a latent structure it never saw — it was not designed for extrapolation.
+UMAP learns a reduced embedding space from the training data, preserving the density structure of that specific sample. When new data points are projected into this learned space via [transform mode](https://umap-learn.readthedocs.io/en/latest/transform.html), UMAP must place them based on a latent structure it never saw — it was not designed for extrapolation.
 
 Two UMAP parameters make this especially sensitive:
 
 **`n_components`** — the dimensionality of the reduced space. A value chosen to capture the structure of a 100K training sample may dramatically underfit a 1M document corpus. The latent space is too simple to represent the broader data, causing messages with different content to collapse into the same region.
 
-**`n_neighbors`** — controls the balance between local and global structure. Lower values preserve fine-grained local relationships in the training data but generalise poorly to unseen data that introduces new local structures. Higher values emphasise global structure and may generalise better to diverse larger datasets, but can obscure important local distinctions.
+**`n_neighbors`** — controls the balance between local and global structure. Lower values preserve fine-grained local relationships in the training data but generalise poorly to unseen data that introduces new local structures. Higher values emphasise global structure and may generalise better to diverse larger datasets, but can obscure important local distinctions. See this [interactive tutorial](https://pair-code.github.io/understanding-umap/) for a visual breakdown of how this parameter shapes the embedding.
 
 ### HDBSCAN's fixed-cluster prediction
 
-HDBSCAN is not designed for online prediction. When applied to new data points, it fixes the condensed tree learned during training and determines where each new point falls within that existing structure. This means:
+HDBSCAN is not designed for online prediction. When applied to new data points, it fixes the [condensed tree](https://hdbscan.readthedocs.io/en/latest/prediction_tutorial.html) learned during training and determines where each new point falls within that existing structure. This means:
 
 1. Clusters are defined entirely by the training sample's density structure
 2. New data points that fall in regions of the space that were sparse during training get assigned to whatever cluster boundary they happen to be nearest — regardless of whether that assignment is semantically meaningful
@@ -157,3 +157,4 @@ flowchart TD
 
 - [UMAP transform documentation](https://umap-learn.readthedocs.io/en/latest/transform.html)
 - [HDBSCAN prediction tutorial](https://hdbscan.readthedocs.io/en/latest/prediction_tutorial.html)
+- [Understanding UMAP — interactive tutorial](https://pair-code.github.io/understanding-umap/)
