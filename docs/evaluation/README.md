@@ -8,6 +8,49 @@ How to assess the performance of thematic allocation — what modes to use, when
 
 ---
 
+## Evaluation Workflow
+
+```mermaid
+flowchart TD
+    A([Annotated data ready]) --> B
+
+    B{Balanced themes\n& sub-themes?}
+    B -->|Yes| C["General sampling\n— proportional draw"]
+    B -->|No| D["Stratified sampling\n— oversample small sub-themes"]
+    C --> E
+    D --> E
+
+    E{Confidence in\ntopic theme map?}
+    E -->|High| F["Small validation subset\n+ larger blind test subset"]
+    E -->|Low / uncertain| G["Larger validation subset\n+ smaller blind test subset"]
+    F --> H
+    G --> H
+
+    H["Validation subset\n— Review mode\nAnnotations visible"]
+    H --> I{Validation\nperformance\nacceptable?}
+    I -->|No| J["Revise thematic\nallocation"]
+    J --> A
+    I -->|Yes| K
+
+    K["Test subset\n— Blind mode\nAnnotations hidden"]
+    K --> L{Blind\nperformance\nacceptable?}
+    L -->|No| M["Diagnose:\nreview test subset\nfor failure patterns"]
+    M --> J
+    L -->|Yes| N([Proceed to analysis])
+
+    classDef process fill:#ffffff,stroke:#1B1A18,stroke-width:1.5px,color:#1B1A18
+    classDef decision fill:#C8A876,stroke:#1B1A18,stroke-width:1.5px,color:#1B1A18,font-weight:bold
+    classDef terminal fill:#1B1A18,stroke:#1B1A18,color:#ffffff,stroke-width:1.5px
+    classDef action fill:#F4EFE5,stroke:#1B1A18,stroke-width:1.5px,color:#1B1A18
+
+    class C,D,F,G,H,K,M process
+    class B,E,I,L decision
+    class A,N terminal
+    class J action
+```
+
+---
+
 ## Overview
 
 The goal of the evaluation stage is to assess the performance of thematic allocation — confirming that messages are correctly assigned to their themes and sub-themes. Evaluation serves a dual purpose: it is both a performance measurement (precision and recall) and a review process that enables analysts to develop a comprehensive understanding of the data, identify stable thematic categories, and flag areas of noise in the annotations. This iterative process often surfaces labelling inconsistencies that require corrective action — a pattern observed consistently across projects.
