@@ -73,6 +73,29 @@ The -1 cluster typically captures 40–60% of data and is not noise — it is fr
 
 ---
 
+## Citation
+
+If you use or reference this work, please cite:
+
+```bibtex
+@misc{younes2024topicmodelingrecipes,
+  author       = {Younes, Ahmed},
+  title        = {Topic Modeling Recipes: Workflows and Methodological Guides for Unsupervised Thematic Analysis},
+  year         = {2024},
+  publisher    = {GitHub},
+  url          = {https://github.com/ay94/topic-modeling-recipes}
+}
+```
+
+---
+
+## License
+
+Documentation and written guides are licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
+Code and notebooks are licensed under the [MIT License](LICENSE).
+
+---
+
 ## Status
 
 Work in progress — sections are being added iteratively. Each section includes a written guide and, where applicable, a worked example notebook.
