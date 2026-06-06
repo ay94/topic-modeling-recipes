@@ -54,26 +54,25 @@ The combined effect: UMAP places new points in an oversimplified latent space, a
 
 ## Solutions
 
-### Solution 1 — Keyword Filtering (recommended)
+### Solution 1 — Corpus Reduction (recommended)
 
-Reduce the full dataset before training, so the model is trained and applied to data of comparable size and distribution. Two variants:
+The core principle: reduce the full dataset to a relevant, manageable size before training, so the model is trained and applied to data drawn from the same distribution. The extrapolation problem disappears when training and application data are comparable in size and structure.
 
-**Keyword-based approach:**
-1. Randomly sample a small subset of the full dataset
-2. Annotate to identify the relevant discussions of interest
-3. Extract keywords that represent those discussions
-4. Use those keywords to retrieve all matching documents from the full corpus
-5. Train and evaluate the topic model on this filtered dataset
+The method used to reduce the corpus depends on what resources are available. All of the following serve the same goal:
 
-**Topic-model-based approach:**
-1. Train a preliminary topic model on a sample
-2. Identify which topics contain relevant discussions
-3. Extract representative keywords from those topics
-4. Discard the preliminary model — use only the keywords
-5. Filter the full corpus using the keywords
-6. Train a new topic model on the filtered corpus
+**Keyword-based:**
+The simplest approach — no labelled data required. Sample a small subset, identify relevant discussions manually, extract representative keywords, then retrieve all matching documents from the full corpus. Can also be combined with a preliminary topic model to automate keyword discovery: train a rough model on a sample, identify relevant topics, extract their keywords, discard the model, and use the keywords to filter. Fast to implement; precision depends on keyword quality.
 
-The keyword filtering approach is the safer option in most cases. By narrowing the search space to documents that are relevant, the training and application data are drawn from the same distribution, eliminating the extrapolation problem.
+**Classifier trained on labelled instances:**
+Train a binary classifier on labelled examples of relevant and irrelevant content, then apply it to the full corpus. More precise than keyword filtering; requires annotation effort upfront. Any standard text classifier works here — the goal is relevance filtering, not thematic analysis.
+
+**KNN-based (semantic similarity):**
+Use annotated exemplar embeddings to classify documents via nearest-neighbour search — relevant documents are those whose embeddings are closest to the annotated relevant examples. No retraining needed as new examples are added; scales well to large corpora. See [`semantic-knn`](https://github.com/ay94/semantic-knn) for an implementation.
+
+**Zero-shot classification:**
+Apply a pre-trained classifier with target category labels to filter without any project-specific labelled data. Lower precision than trained approaches but requires no annotation.
+
+These can be combined — keyword filtering as a coarse first pass, then a classifier or KNN for precision. The right choice depends on what labelled data, embedding infrastructure, and time are available.
 
 ---
 
@@ -98,7 +97,7 @@ flowchart TD
     A([Large dataset]) --> B{Can full corpus\nfit in training?}
     B -->|Yes| C["Train on full corpus\n— no extrapolation risk"]
     B -->|No| D{Is there a clear\nrelevance filter?}
-    D -->|Yes| E["Keyword filtering\n— reduce corpus first\nthen train"]
+    D -->|Yes| E["Corpus reduction\n— keyword / classifier / KNN\nthen train"]
     D -->|No| F{Batch processing\nfeasible?}
     F -->|Yes| G["Incremental transformation\n— batch ≈ training size"]
     F -->|No| H["Sample + train\n⚠️ Validate carefully\non held-out full-corpus sample"]
