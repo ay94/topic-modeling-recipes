@@ -26,7 +26,7 @@ Annotations are hidden. Analysts read the message and independently assign a the
 
 The cost: if performance is low, analysts must go through the same sample two or three times — once to evaluate, then again to identify the specific misallocations, then again to address them. In review mode, problematic annotations are identified and understood in a single pass.
 
-**When the bias concern emerged:** Concerns were raised during a previous project that showing analysts the topic model annotations was influencing their judgements — they were more likely to agree with the model's assignment than to flag it, inflating apparent precision. This prompted a reconsideration of review as the default approach.
+**The bias concern:** In practice, showing analysts the topic model annotations can influence their judgements — they are more likely to agree with the model's assignment than to flag it, inflating apparent precision. This is a known risk of review mode that should be weighed against its efficiency advantages.
 
 ---
 
