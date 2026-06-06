@@ -14,6 +14,16 @@ When working with large datasets, it is common practice to train the topic model
 
 The failure is silent because initial evaluation on the training sample shows high performance. The degradation only becomes apparent when the model is applied to the full dataset — at which point analyst-defined topic descriptions may no longer match what the model is actually assigning to those topics. A topic initially defined as covering one specific narrative can expand to absorb a substantially different set of messages in the broader corpus.
 
+**On the training sample** — topics are compact and well-separated in the UMAP space:
+
+![Topics on training sample](figures/training-sample.png)
+
+**On the full corpus** — the same topics have expanded dramatically and their boundaries have collapsed into each other:
+
+![Topic drift on full corpus](figures/full-corpus-drift.png)
+
+The shift between these two states is the extrapolation problem.
+
 In practice this has been observed as a significant issue on large datasets and a lesser but still present issue on moderately large ones. It is one of the most common silent failures in applied topic modelling.
 
 ---
