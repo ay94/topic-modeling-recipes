@@ -10,7 +10,9 @@ How to handle datasets too large to model in full — and the critical problem t
 
 ## The Problem
 
-When working with large datasets, it is common practice to train the topic model on a sample and then apply the trained model to the full corpus. This works well in many contexts, but with UMAP + HDBSCAN it introduces a silent failure mode: **topic definitions shift significantly when the model is applied to data outside its training distribution**.
+Topic modelling with UMAP + HDBSCAN has a hard computational ceiling: in practice, the pipeline becomes unstable above approximately 500K documents due to memory and processing constraints. For datasets above this threshold, training must happen on a sample — typically 100K–200K documents — with the trained model then applied to the remaining data.
+
+This is where the extrapolation problem emerges. Sampling is not optional for large corpora; it is required. But UMAP and HDBSCAN were not designed to extrapolate to data outside their training distribution, so applying the trained model to the full corpus introduces a **silent failure mode: topic definitions shift significantly on the unseen data**.
 
 The failure is silent because initial evaluation on the training sample shows high performance. The degradation only becomes apparent when the model is applied to the full dataset — at which point analyst-defined topic descriptions may no longer match what the model is actually assigning to those topics. A topic initially defined as covering one specific narrative can expand to absorb a substantially different set of messages in the broader corpus.
 
@@ -52,41 +54,55 @@ The combined effect: UMAP places new points in an oversimplified latent space, a
 
 ---
 
-## Solutions
+## Extending Coverage to the Full Corpus
 
-### Solution 1 — Corpus Reduction (recommended)
+The training sample produces a topic model with well-defined clusters. The challenge is extending that model's coverage to the remaining data — the documents it never saw — without the drift that comes from applying UMAP + HDBSCAN directly to out-of-distribution data.
 
-The core principle: reduce the full dataset to a relevant, manageable size before training, so the model is trained and applied to data drawn from the same distribution. The extrapolation problem disappears when training and application data are comparable in size and structure.
-
-The method used to reduce the corpus depends on what resources are available. All of the following serve the same goal:
-
-**Keyword-based:**
-The simplest approach — no labelled data required. Sample a small subset, identify relevant discussions manually, extract representative keywords, then retrieve all matching documents from the full corpus. Can also be combined with a preliminary topic model to automate keyword discovery: train a rough model on a sample, identify relevant topics, extract their keywords, discard the model, and use the keywords to filter. Fast to implement; precision depends on keyword quality.
-
-**Classifier trained on labelled instances:**
-Train a binary classifier on labelled examples of relevant and irrelevant content, then apply it to the full corpus. More precise than keyword filtering; requires annotation effort upfront. Any standard text classifier works here — the goal is relevance filtering, not thematic analysis.
-
-**KNN-based (semantic similarity):**
-Use annotated exemplar embeddings to classify documents via nearest-neighbour search — relevant documents are those whose embeddings are closest to the annotated relevant examples. No retraining needed as new examples are added; scales well to large corpora. See [`semantic-knn`](https://github.com/ay94/semantic-knn) for an implementation.
-
-**Zero-shot classification:**
-Apply a pre-trained classifier with target category labels to filter without any project-specific labelled data. Lower precision than trained approaches but requires no annotation.
-
-These can be combined — keyword filtering as a coarse first pass, then a classifier or KNN for precision. The right choice depends on what labelled data, embedding infrastructure, and time are available.
+Three approaches, in order of preference:
 
 ---
 
-### Solution 2 — Incremental Transformation
+### Approach 1 — KNN Labelling (preferred)
+
+The trained topic model has already defined a set of clusters, each with its own embedding structure. Rather than projecting new documents through UMAP and HDBSCAN, use the cluster exemplars from the training run to label the remaining documents via semantic nearest-neighbour search.
+
+Each unseen document is compared against the annotated exemplars from each cluster. It is assigned to whichever cluster it is most similar to, based on embedding distance. No new model is needed; no UMAP projection of unseen data; no HDBSCAN extrapolation. The labelling is driven entirely by the semantic structure established during training.
+
+This is the approach the pipeline was designed around. See [`semantic-knn`](https://github.com/ay94/semantic-knn) for an implementation built for this use case.
+
+**When to use:** The topic model has been trained and annotated. Cluster definitions are stable. The goal is coverage of the remaining corpus using what the model already learned.
+
+---
+
+### Approach 2 — Keyword-Based Classification
+
+Extract representative keywords from each trained topic. Use those keywords to classify unseen documents — a document is assigned to the topic whose keywords it most closely matches. This can be as simple as keyword overlap scoring or as sophisticated as a trained classifier built from the keyword-defined classes.
+
+The topic model output informs the classification, but the classification itself does not require re-running UMAP or HDBSCAN on the new data.
+
+**When to use:** Embedding infrastructure is not available for KNN, or a faster, more interpretable labelling method is preferred. Less precise than KNN for semantically similar topics with overlapping vocabulary.
+
+---
+
+### Approach 3 — Layered Topic Modelling
+
+Rather than labelling the unseen data using the first model, run a second topic model on it — informed by but independent of the first. The second model discovers whatever structure exists in the unseen portion, and the two models are integrated via a shared annotation schema.
+
+This is not a disposable model — it is a second analytical layer. It is best used when the unseen data is large enough that its own internal structure is worth discovering rather than just assigning to the first model's categories.
+
+See [`docs/layered/`](../layered/) for the full multilayered topic modelling approach.
+
+**When to use:** The unseen portion of the corpus is large and potentially contains narratives not well-represented in the training sample. Coverage via labelling would force content into ill-fitting categories.
+
+---
+
+### Approach 4 — Incremental Transformation
 
 > **Status:** Proposed — requires further testing before production use.
 
-Rather than applying the trained model to the full corpus in one pass, divide the unseen data into batches approximately the same size as the training data and transform each batch separately.
+Divide the unseen data into batches approximately the same size as the training data and transform each batch separately through the trained UMAP + HDBSCAN model. This reduces the extrapolation gap by keeping each input batch closer to the training distribution in size.
 
-For example: a model trained on 100K documents applied to 1M documents would process 10 batches of 100K. Each batch is transformed independently, keeping the input size consistent with what the model was trained on.
-
-**Sampling within batches:** The training sample must itself be representative. If the full corpus is divided into chunks, sample from each chunk proportionally until reaching the training cap — rather than sampling all training data from one region of the corpus.
-
-**Tradeoff:** Incremental transformation adds computational and maintenance overhead. It does not fully eliminate the extrapolation problem — it reduces it by keeping batch sizes closer to training size — but it does not guarantee that each batch has the same density structure as the training data.
+**Tradeoff:** Reduces but does not eliminate the extrapolation problem. Adds computational overhead. The training sample must itself be representative — sample proportionally across data sources rather than from one region of the corpus.
 
 ---
 
@@ -94,41 +110,46 @@ For example: a model trained on 100K documents applied to 1M documents would pro
 
 ```mermaid
 flowchart TD
-    A([Large dataset]) --> B{Can full corpus\nfit in training?}
-    B -->|Yes| C["Train on full corpus\n— no extrapolation risk"]
-    B -->|No| D{Is there a clear\nrelevance filter?}
-    D -->|Yes| E["Corpus reduction\n— keyword / classifier / KNN\nthen train"]
-    D -->|No| F{Batch processing\nfeasible?}
-    F -->|Yes| G["Incremental transformation\n— batch ≈ training size"]
-    F -->|No| H["Sample + train\n⚠️ Validate carefully\non held-out full-corpus sample"]
+    A([Large dataset\n> 500K documents]) --> B["Train topic model\non sample\n~100K–200K"]
+    B --> C["Annotate topics\nfrom training run"]
+    C --> D{Embedding\ninfrastructure\navailable?}
 
-    C --> Z([Proceed])
-    E --> Z
+    D -->|Yes| E["KNN labelling\nsemantic-knn\n← preferred"]
+    D -->|No| F{Topic keywords\nclear & distinct?}
+
+    F -->|Yes| G["Keyword-based\nclassification"]
+    F -->|No| H{Unseen data\nlarge enough for\nown structure?}
+
+    H -->|Yes| I["Layered topic\nmodelling\ndocs/layered"]
+    H -->|No| J["Incremental\ntransformation\n⚠️ experimental"]
+
+    E --> Z([Full corpus covered])
     G --> Z
-    H --> I{Topic definitions\nstable on full corpus?}
-    I -->|Yes| Z
-    I -->|No| E
+    I --> Z
+    J --> Z
 
     classDef process fill:#ffffff,stroke:#1B1A18,stroke-width:1.5px,color:#1B1A18
     classDef decision fill:#C8A876,stroke:#1B1A18,stroke-width:1.5px,color:#1B1A18,font-weight:bold
     classDef terminal fill:#1B1A18,stroke:#1B1A18,color:#ffffff,stroke-width:1.5px
-    classDef warning fill:#F4EFE5,stroke:#1B1A18,stroke-width:1.5px,color:#1B1A18
+    classDef preferred fill:#F4EFE5,stroke:#1B1A18,stroke-width:1.5px,color:#1B1A18
 
-    class C,E,G process
-    class B,D,F,I decision
+    class B,C,G,I,J process
+    class D,F,H decision
     class A,Z terminal
-    class H warning
+    class E preferred
 ```
 
 ---
 
 ## Checklist
 
-- [ ] Dataset size assessed relative to computational budget before choosing a training strategy
-- [ ] If training on a sample: extrapolation risk acknowledged and a mitigation strategy chosen
-- [ ] If using keyword filtering: keywords validated as representative before filtering the full corpus
-- [ ] If using incremental transformation: batch size matched to training corpus size
-- [ ] Topic definitions validated on a held-out sample of the full corpus before final annotation
+- [ ] Dataset size assessed — if above ~500K, a sampling and coverage extension strategy is required
+- [ ] Training sample is representative — sampled proportionally across data sources, not from one region
+- [ ] Coverage extension approach agreed before annotation begins (KNN / keyword / layered / incremental)
+- [ ] If using KNN: cluster exemplars saved from the training run before applying to unseen data
+- [ ] If using keyword classification: keywords validated as distinct and representative per topic
+- [ ] If using layered modelling: annotation schema agreed to bridge both models
+- [ ] Topic definitions spot-checked on a sample of the covered data before final annotation
 
 ---
 
