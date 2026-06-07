@@ -10,6 +10,8 @@ The result is a **topic theme map** — a hierarchical structure that assigns ev
 
 The pipeline has five stages: preprocessing, semantic representation, topic modelling, thematic allocation, and evaluation.
 
+In practice, the modelling stage (UMAP → HDBSCAN → c-TF-IDF) is most commonly implemented via **BERTopic**, a Python library that wraps all three steps into a single interface. Each step can also be run independently using dedicated libraries (`umap-learn`, `hdbscan`, or equivalent), or via alternative frameworks. This document describes the methodology in terms of BERTopic where relevant and will be updated as new tools are adopted.
+
 > **Cross-references:**
 > - Annotation methodology: [`docs/annotation/`](../annotation/)
 > - Evaluation methodology: [`docs/evaluation/`](../evaluation/)
@@ -69,7 +71,7 @@ Preprocessing quality directly affects the quality of topic representations. Ele
 - Remove stopwords
 - Deduplicate messages
 
-**Note on deduplication:** duplicate messages may carry analytical meaning in some contexts — for example, coordinated posting behaviour. Whether to deduplicate depends on the project's objectives. If coordination is relevant, duplicates should be retained or handled separately rather than discarded.
+**Note on deduplication:** when coordination is an analytical objective, deduplicating before drawing an analytical sample removes the coordination signal from the sample. Repeated messages reflect coordinated behaviour, and their frequency in the sample should mirror their frequency in the data. If deduplication happens before sampling, that distribution is eliminated and any coordination analysis on the sample will be working with tampered or incomplete data. In such cases, deduplication should be applied after the analytical sample is drawn — not before.
 
 ---
 
