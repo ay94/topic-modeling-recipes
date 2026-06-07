@@ -10,9 +10,9 @@ As described in [`docs/workflow/`](../workflow/), topic modelling produces a set
 
 ## Overview
 
-The standard annotation method fixes the sample size per topic based on project type: **5 messages** for exploratory projects, and **10 messages** for quantitative projects where thematic allocation is evaluated. The annotator reviews that sample, produces a single topic description, and organises topics into themes and sub-themes. Sub-themes are then evaluated — a sub-theme passes if at least **7 out of 10** randomly drawn messages are correctly assigned to it. If a sub-theme falls below that threshold, the topic theme map is revised and re-evaluated.
+The standard annotation method fixes the sample size per topic based on project type: **5 messages** for exploratory projects focused on qualitative analysis, and **10 messages** for quantitative projects where greater robustness is needed. The annotator reviews that sample and determines the topic's dominant theme by majority membership — if 7 out of 10 sampled messages discuss football, the topic is about football (or 4 out of 5 in the 5-message case). Topics are then organised into themes and sub-themes to produce a topic theme map. Both conventions proved broadly effective but carry the same core limitation.
 
-This works at a broad level but has well-documented limitations: a fixed sample applies equal attention to a 30-message topic and a 3,000-message topic, the description is an approximation from a small window, and performance degrades as the analysis becomes more granular.
+The methodological weakness is not simply that a 30-message topic and a 3,000-message topic receive the same 10-message sample. It is that there is no clear statistical basis for choosing 10 or 5 in the first place — no statistical indication that either number is sufficient or representative for any given topic. The choice was validated through project experience, not derived from the data.
 
 The **granular annotation scheme** replaces this with:
 
