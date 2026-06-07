@@ -1,6 +1,6 @@
 # Granular Annotation Scheme
 
-The standard topic annotation method selects a fixed sample per topic — 5 or 10 messages — and passes or fails sub-themes against a 7-out-of-10 rule. This document introduces the granular annotation scheme: a more rigorous replacement that uses proportional sampling, per-message description, and entropy-based stopping criteria.
+As described in [`docs/workflow/`](../workflow/), topic modelling produces a set of topics via embedding, UMAP, and HDBSCAN. The annotation phase follows: each topic is sampled, described, and organised into a topic theme map. This document covers the annotation phase specifically — how to conduct it rigorously.
 
 > **Cross-references:**
 > - Core pipeline context: [`docs/workflow/`](../workflow/)
@@ -10,20 +10,16 @@ The standard topic annotation method selects a fixed sample per topic — 5 or 1
 
 ## Overview
 
-This document introduces the **granular annotation scheme** — a new approach to topic annotation that addresses the weaknesses of the standard fixed-sample method.
-
-In the standard approach, the sample size per topic is fixed based on project type: **5 messages** for exploratory projects focused on qualitative narrative discovery, and **10 messages** for quantitative projects where thematic allocation is evaluated. After sampling, the annotator reviews those messages, produces a single topic description, and organises topics into themes and sub-themes. The resulting topic theme map is then evaluated — typically by checking whether at least **7 out of 10 randomly drawn messages** are correctly assigned to their sub-theme. If a sub-theme falls below that threshold, the topic theme map is revised and re-evaluated.
+The standard annotation method fixes the sample size per topic based on project type: **5 messages** for exploratory projects, and **10 messages** for quantitative projects where thematic allocation is evaluated. The annotator reviews that sample, produces a single topic description, and organises topics into themes and sub-themes. Sub-themes are then evaluated — a sub-theme passes if at least **7 out of 10** randomly drawn messages are correctly assigned to it. If a sub-theme falls below that threshold, the topic theme map is revised and re-evaluated.
 
 This works at a broad level but has well-documented limitations: a fixed sample applies equal attention to a 30-message topic and a 3,000-message topic, the description is an approximation from a small window, and performance degrades as the analysis becomes more granular.
 
-The granular scheme replaces this with:
+The **granular annotation scheme** replaces this with:
 
 - **Proportional sampling** — 10% of messages per topic rather than a fixed count
 - **Per-message annotation** — each sampled message receives an individual description; the most frequent description represents the topic
 - **Entropy-based stopping criteria** — measures description diversity to determine when a topic is sufficiently characterised, without reviewing the full sample
 - **Annotation patience** — a hyperparameter that bounds the number of annotation iterations before a decision is made
-
-The pipeline context is the same in both cases — topic modelling produces topics, and the annotation phase follows. For the full pipeline steps (embedding, UMAP, HDBSCAN, BERTopic, topic theme map construction), see [`docs/workflow/`](../workflow/). The granular scheme governs how the annotation phase of that pipeline is conducted.
 
 ---
 
