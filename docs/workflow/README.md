@@ -20,17 +20,26 @@ The pipeline has five stages: preprocessing, semantic representation, topic mode
 ## Pipeline Overview
 
 ```mermaid
-flowchart LR
-    A([Messages]) --> B[Preprocessing\nclean · deduplicate]
-    B --> C[Embedding model\ne.g. sentence-transformers]
-    C --> D[Embeddings\nhigh-dim vectors]
-    D --> E[UMAP\ndimensionality reduction]
-    E --> F[HDBSCAN\nclustering]
-    F --> G[Topics + outliers\n-1 messages]
-    G --> H[c-TF-IDF\nkeyword extraction]
-    H --> I[Topic representations\nkeywords per topic]
-    I --> J[Thematic allocation\nannotation]
-    J --> K([Topic theme map])
+flowchart TB
+    subgraph row1 [" "]
+        direction LR
+        A([Messages]) --> B[Preprocessing\nclean · deduplicate]
+        B --> C[Embedding model\ne.g. sentence-transformers]
+        C --> D[Embeddings\nhigh-dim vectors]
+        D --> E[UMAP\ndimensionality reduction]
+    end
+
+    subgraph row2 [" "]
+        direction LR
+        F[HDBSCAN\nclustering]
+        F --> G[Topics + outliers\n-1 messages]
+        G --> H[c-TF-IDF\nkeyword extraction]
+        H --> I[Topic representations\nkeywords per topic]
+        I --> J[Thematic allocation\nannotation]
+        J --> K([Topic theme map])
+    end
+
+    E --> F
 
     classDef process fill:#ffffff,stroke:#1B1A18,stroke-width:1.5px,color:#1B1A18
     classDef decision fill:#C8A876,stroke:#1B1A18,stroke-width:1.5px,color:#1B1A18,font-weight:bold
