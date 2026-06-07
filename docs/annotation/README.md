@@ -46,7 +46,7 @@ The result is a topic theme map used for analysis or evaluation. Because the met
 ### Cons
 
 - **Performance degrades at granular levels** — the more granular the sub-theme breakdown, the lower the thematic allocation performance. Fixed-sample descriptions are approximations that become less reliable as analytical resolution increases.
-- **Fixed sample size is methodologically weak** — it implicitly assumes equal distribution across all topics, which is rarely the case. This assumption can be difficult to defend when challenged.
+- **Methodologically hard to justify** — there is no statistical basis for choosing 5 or 10 messages. Neither number is derived from the data or from any statistical indication of what sample size is sufficient or representative. The choice was validated through project experience alone, which is difficult to defend when challenged. A further consequence is that the same fixed count is applied regardless of topic size — a 30-message topic and a 3,000-message topic receive identical annotation attention.
 - **Evaluation requires multiple iterations** — if the initial theme map produces poor evaluation performance, the annotation must be revised and re-evaluated, sometimes multiple times.
 - **Noise is hard to handle** — identifying and filtering irrelevant or noisy topics is difficult. The usual responses (discard or apply keyword filters) each introduce additional methodological complexity.
 - **Description is an approximation** — because the sample is fixed and small, the topic description is based on an incomplete picture. Allocating sub-themes and themes requires domain knowledge to fill in what the topic might be discussing beyond the sample.
