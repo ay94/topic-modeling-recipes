@@ -10,7 +10,11 @@ An alternative to fixed-sample annotation that uses proportional sampling, per-m
 
 ## Overview
 
-This document introduces the **granular annotation scheme** — a new approach to topic annotation that addresses the weaknesses of the standard fixed-sample method. The standard approach selects a fixed number of messages per topic (typically 10), describes the topic from that sample, and organises topics into a theme map. While workable, this method has well-documented limitations at granular levels: it applies a uniform sample size regardless of topic size, makes the annotation and homogeneity judgement simultaneously, and requires multiple evaluation iterations when performance is low.
+This document introduces the **granular annotation scheme** — a new approach to topic annotation that addresses the weaknesses of the standard fixed-sample method.
+
+In the standard approach, the sample size per topic is fixed based on project type: **5 messages** for exploratory projects focused on qualitative narrative discovery, and **10 messages** for quantitative projects where thematic allocation is evaluated. After sampling, the annotator reviews those messages, produces a single topic description, and organises topics into themes and sub-themes. The resulting topic theme map is then evaluated — typically by checking whether at least **7 out of 10 randomly drawn messages** are correctly assigned to their sub-theme. If a sub-theme falls below that threshold, the topic theme map is revised and re-evaluated.
+
+This works at a broad level but has well-documented limitations: a fixed sample applies equal attention to a 30-message topic and a 3,000-message topic, the description is an approximation from a small window, and performance degrades as the analysis becomes more granular.
 
 The granular scheme replaces this with:
 
