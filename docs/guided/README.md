@@ -29,6 +29,32 @@ The model is trained to bring positives closer in the embedding space and push n
 
 Two implementations are available depending on the use case. One approach is **SetFit** — a few-shot fine-tuning framework from HuggingFace (see the [SetFit library](https://github.com/huggingface/setfit)) that requires only a small number of labelled examples (typically 8–16 per class) drawn from existing cluster output. No large labelled dataset is required; the cluster output itself provides the training signal. A SetFit-based implementation is also available in the [`multilingual-topic-modeling`](https://github.com/ay94/multilingual-topic-modeling) library. The other approach is a **full contrastive learning pipeline** — training directly with contrastive or triplet loss on positive and negative pairs, with explicit control over pairing strategy, loss function, and evaluation. An implementation of this approach is available in [this repository](<!-- TODO: add repo link when published -->).
 
+### SetFit workflow
+
+```mermaid
+flowchart TD
+    subgraph SN["SetFit notebook"]
+        A[["Pre-processed\ndata"]] --> C["SetFit\nfine-tuning"]
+        B(["HF hub\nSentence Transformer"]) --> C
+        C --> D[("Fine-tuned\nmodel")]
+    end
+    D --> E["Topic model\nUMAP · HDBSCAN"]
+```
+
+### Contrastive learning workflow
+
+```mermaid
+flowchart TD
+    subgraph CL["Contrastive learning notebook"]
+        A[["Pre-processed\nlabelled data"]] --> B["Pair generation\npositive · negative"]
+        E(["Base Sentence\nTransformer"]) --> C
+        B --> C["Fine-tuning\ncontrastive / triplet loss"]
+        C --> F["Validation\nsemantic map · silhouette · kNN"]
+        F --> D[("Fine-tuned\nmodel")]
+    end
+    D --> G["Topic model\nUMAP · HDBSCAN"]
+```
+
 ### Pairing strategies
 
 **Default** — generates all pairwise combinations within each class up to a sample size cap, then pairs each positive with negatives from all other classes. Thorough but can be imbalanced when class sizes differ significantly.
