@@ -154,14 +154,16 @@ Example: a topic of 1,000 messages yields a 100-message sample, divided into 10 
 
 **Annotation patience** is the key hyperparameter that defines how many consecutive stable-entropy iterations trigger early stopping.
 
-Its initial value is set based on the **distribution of topic sizes** in the model:
+Its initial value is derived from the **distribution of annotation iterations across all topics in the model**. For each topic, compute the 10% sample size and divide by 10 to get the number of 10-message iterations that topic would yield. This gives a distribution of iteration counts across all topics. Patience is then set to a percentile of that distribution:
 
-- If the average topic size is greater than 5, set annotation patience = **5** (ensuring annotators review at most 50 messages per topic).
-- If the average topic size is less than or equal to 5, set annotation patience = **⌈mean of topic size distribution⌉**.
+- **50th percentile (median)** — suitable for projects with tighter time or budget constraints. Annotators stop earlier on average; some heterogeneity may go undetected in larger topics.
+- **75th percentile** — suitable for projects where thoroughness is the priority and more annotation time is available. Annotators review more of each topic before stopping.
 
-Example: a model with 100 topics. Examine the spread of message counts across those topics. If the mean exceeds 5, patience = 5; otherwise patience = the ceiling of the mean.
+The choice of percentile is a project-level decision made before annotation begins, based on available time and the required level of analytical confidence.
 
-Annotation patience is not fixed across the full annotation run — it can be reduced progressively as annotation proceeds and the model's homogeneity landscape becomes clearer.
+**Example:** a model with 100 topics. For each topic, compute its 10% sample and divide by 10 to get iteration count. If the 75th percentile of that distribution is 6, set patience = 6 — meaning annotation stops after 6 consecutive stable-entropy iterations (60 messages reviewed per topic at most).
+
+Annotation patience is not fixed for the full annotation run. As annotation proceeds and the homogeneity landscape of the model becomes clearer, patience can be progressively reduced for remaining topics.
 
 ---
 
