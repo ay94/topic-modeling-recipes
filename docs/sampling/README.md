@@ -44,7 +44,9 @@ Two UMAP parameters make this especially sensitive:
 
 ### HDBSCAN's fixed-cluster prediction
 
-HDBSCAN is not designed for online prediction. When applied to new data points, it fixes the [condensed tree](https://hdbscan.readthedocs.io/en/latest/prediction_tutorial.html) learned during training and determines where each new point falls within that existing structure. This means:
+HDBSCAN constructs a [condensed tree](https://hdbscan.readthedocs.io/en/latest/prediction_tutorial.html) representation of the clustering hierarchy, which is used to extract clusters at different density levels. However, it encounters challenges when dealing with new data points, as they have the potential to alter the underlying clustering. To mitigate this, it fixes the existing clustering and determines where each new point falls within the condensed tree — assuming the tree remains unchanged.
+
+This design means HDBSCAN is not suited for online prediction. In practice:
 
 1. Clusters are defined entirely by the training sample's density structure
 2. New data points that fall in regions of the space that were sparse during training get assigned to whatever cluster boundary they happen to be nearest — regardless of whether that assignment is semantically meaningful
