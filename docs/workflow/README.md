@@ -109,6 +109,12 @@ Once topics are formed, each is represented by keywords extracted using **c-TF-I
 
 These keyword representations are used to interpret each topic during annotation and to visualise relationships between topics.
 
+### Visualisation of Relationships
+
+BERTopic can visualise the relationships between topics based on their c-TF-IDF scores, highlighting word overlap and thematic connections across the topic set. This is useful for getting a high-level view of the topic landscape.
+
+An important limitation: these visualisations reflect **keyword overlap**, not the original embedding structure. Topics were formed based on semantic similarity in the embedding space, but the visual layout of their relationships is derived from word co-occurrence in c-TF-IDF representations. The two can give different pictures of how topics relate — a pair of topics may be close in the embedding space but distant in the visualisation if they use different vocabulary, and vice versa. The relationship between topics in the visualisation should therefore be treated as a word-overlap signal, not as a direct representation of semantic proximity.
+
 ---
 
 ## Stage 4: Thematic Allocation
