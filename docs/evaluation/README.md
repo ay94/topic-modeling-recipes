@@ -12,50 +12,89 @@ How to assess the performance of thematic allocation — what modes to use, when
 
 ```mermaid
 flowchart TD
-    A([Annotated data ready]) --> B
+    A([Annotated data ready]) --> P1
 
-    B{Balanced themes\n& sub-themes?}
-    B -->|Yes| C["General sampling\n— proportional draw"]
-    B -->|No| D["Stratified sampling\n— oversample small sub-themes"]
-    C --> E
-    D --> E
+    subgraph Phase1["Phase 1 — Subtheme validation"]
+        P1["Stratified sample\n50 messages per subtheme"] --> P2{Precision ≥ 0.7\nper subtheme?}
+        P2 -->|Yes — all subthemes| P3([Pass to Phase 2])
+        P2 -->|No| P4{Remediation}
+        P4 --> P4a["Remove subtheme\n— label topics irrelevant"]
+        P4 --> P4b["Isolate underperforming\ntopic within subtheme"]
+        P4 --> P4c["Merge with\nadjacent subtheme"]
+        P4a --> P1
+        P4b --> P1
+        P4c --> P1
+    end
 
-    E{Confidence in\ntopic theme map?}
-    E -->|High| F["Small validation subset\n+ larger blind test subset"]
-    E -->|Low / uncertain| G["Larger validation subset\n+ smaller blind test subset"]
-    F --> H
-    G --> H
+    P3 --> B
 
-    H["Validation subset\n— Review mode\nAnnotations visible"]
-    H --> I{Validation\nperformance\nacceptable?}
-    I -->|No| J["Revise thematic\nallocation"]
-    J --> A
-    I -->|Yes| K
+    subgraph Phase2["Phase 2 — Full evaluation"]
+        B{Balanced themes\n& sub-themes?}
+        B -->|Yes| C["General sampling\n— proportional draw"]
+        B -->|No| D["Stratified sampling\n— oversample small sub-themes"]
+        C --> E
+        D --> E
 
-    K["Test subset\n— Blind mode\nAnnotations hidden"]
-    K --> L{Blind\nperformance\nacceptable?}
-    L -->|No| M["Diagnose:\nreview test subset\nfor failure patterns"]
-    M --> J
-    L -->|Yes| N([Proceed to analysis])
+        E{Confidence in\ntopic theme map?}
+        E -->|High| F["Small validation subset\n+ larger blind test subset"]
+        E -->|Low / uncertain| G["Larger validation subset\n+ smaller blind test subset"]
+        F --> H
+        G --> H
+
+        H["Validation subset\n— Review mode\nAnnotations visible"]
+        H --> I{Validation\nperformance\nacceptable?}
+        I -->|No| J["Revise thematic\nallocation"]
+        J --> A
+        I -->|Yes| K
+
+        K["Test subset\n— Blind mode\nAnnotations hidden"]
+        K --> L{Blind\nperformance\nacceptable?}
+        L -->|No| M["Diagnose:\nreview test subset\nfor failure patterns"]
+        M --> J
+        L -->|Yes| N([Proceed to analysis])
+    end
 
     classDef process fill:#ffffff,stroke:#1B1A18,stroke-width:1.5px,color:#1B1A18
     classDef decision fill:#C8A876,stroke:#1B1A18,stroke-width:1.5px,color:#1B1A18,font-weight:bold
     classDef terminal fill:#1B1A18,stroke:#1B1A18,color:#ffffff,stroke-width:1.5px
     classDef action fill:#F4EFE5,stroke:#1B1A18,stroke-width:1.5px,color:#1B1A18
+    classDef remediation fill:#F4EFE5,stroke:#1B1A18,stroke-width:1px,color:#1B1A18
 
-    class C,D,F,G,H,K,M process
-    class B,E,I,L decision
-    class A,N terminal
-    class J action
+    class C,D,F,G,H,K,M,P1 process
+    class B,E,I,L,P2,P4 decision
+    class A,N,P3 terminal
+    class J,P4a,P4b,P4c remediation
 ```
 
 ---
 
 ## Overview
 
-The goal of the evaluation stage is to assess the performance of thematic allocation — confirming that messages are correctly assigned to their themes and sub-themes. Evaluation serves a dual purpose: it is both a performance measurement (precision and recall) and a review process that enables analysts to develop a comprehensive understanding of the data, identify stable thematic categories, and flag areas of noise in the annotations. This iterative process often surfaces labelling inconsistencies that require corrective action — a pattern observed consistently across projects.
+Evaluation runs in two phases. Phase 1 is a subtheme-level precision gate that must be passed before Phase 2 begins. Phase 2 is the full evaluation — sampling strategy, mode, and complete metrics. The goal of the evaluation stage is to assess the performance of thematic allocation — confirming that messages are correctly assigned to their themes and sub-themes. Evaluation serves a dual purpose: it is both a performance measurement (precision and recall) and a review process that enables analysts to develop a comprehensive understanding of the data, identify stable thematic categories, and flag areas of noise in the annotations. This iterative process often surfaces labelling inconsistencies that require corrective action — a pattern observed consistently across projects.
 
 ---
+
+---
+
+## Phase 1 — Subtheme Validation
+
+Before running the full evaluation, each subtheme is checked individually. A stratified sample of **50 messages per subtheme** is drawn and evaluated for precision only — the question is whether the messages assigned to a subtheme actually belong to it.
+
+**Threshold: 0.7 precision.** Subthemes that meet or exceed 0.7 pass. Subthemes below 0.7 require remediation before Phase 2 begins.
+
+### Remediation for underperforming subthemes
+
+**Remove the subtheme** — if the subtheme cannot be made coherent, label all its constituent topics as irrelevant and remove it from the topic theme map. Apply this when the subtheme is too heterogeneous to be analytically useful.
+
+**Isolate the underperforming topic** — if the subtheme contains multiple topics and one is dragging overall precision below threshold, identify it by reviewing which topic contributes the most irrelevant-labelled messages and remove that topic only. The remaining topics may then pass.
+
+**Merge with an adjacent subtheme** — if many messages in the underperforming subtheme are being assigned to a neighbouring subtheme during evaluation, the two subthemes likely overlap too much to be meaningfully distinct. Merge them and re-evaluate.
+
+> Phase 1 is a gate, not a full evaluation pass. Once all subthemes meet the threshold, proceed to Phase 2.
+
+---
+
+## Phase 2 — Full Evaluation
 
 ## Evaluation Modes
 
@@ -143,6 +182,13 @@ If quantitative claims appear in the output, evaluation is required regardless o
 
 ## Checklist
 
+**Phase 1**
+- [ ] 50-message stratified sample drawn per subtheme
+- [ ] Precision calculated per subtheme
+- [ ] All subthemes ≥ 0.7 — or remediation applied (remove / isolate / merge)
+- [ ] Topic theme map updated to reflect any removals or merges
+
+**Phase 2**
 - [ ] Evaluation mode agreed: review, blind, or hybrid
 - [ ] Sampling strategy agreed: general or stratified
 - [ ] Evaluation level agreed: theme or sub-theme
