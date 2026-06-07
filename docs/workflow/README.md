@@ -23,21 +23,23 @@ The pipeline has five stages: preprocessing, semantic representation, topic mode
 flowchart LR
     A([Messages]) --> B[Preprocessing\nclean · deduplicate]
     B --> C[Embedding model\ne.g. sentence-transformers]
-    C --> D[UMAP\ndimensionality reduction]
-    D --> E[HDBSCAN\nclustering]
-    E --> F[Topics\n+ outliers -1]
-    F --> G[c-TF-IDF\nkeyword extraction]
-    G --> H[Topic representations\nkeywords per topic]
-    H --> I[Thematic allocation\nannotation]
-    I --> J([Topic theme map])
+    C --> D[Embeddings\nhigh-dim vectors]
+    D --> E[UMAP\ndimensionality reduction]
+    E --> F[HDBSCAN\nclustering]
+    F --> G[Topics + outliers\n-1 messages]
+    G --> H[c-TF-IDF\nkeyword extraction]
+    H --> I[Topic representations\nkeywords per topic]
+    I --> J[Thematic allocation\nannotation]
+    J --> K([Topic theme map])
 
     classDef process fill:#ffffff,stroke:#1B1A18,stroke-width:1.5px,color:#1B1A18
+    classDef decision fill:#C8A876,stroke:#1B1A18,stroke-width:1.5px,color:#1B1A18,font-weight:bold
     classDef terminal fill:#1B1A18,stroke:#1B1A18,color:#ffffff,stroke-width:1.5px
     classDef data fill:#F4EFE5,stroke:#1B1A18,stroke-width:1.5px,color:#1B1A18
 
-    class A,J terminal
-    class B,C,D,E,G,H,I process
-    class F data
+    class A,K terminal
+    class B,C,E,F,H,J process
+    class D,G,I data
 ```
 
 ---
