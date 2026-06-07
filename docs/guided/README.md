@@ -101,9 +101,13 @@ Before rerunning topic modelling, the adjusted embedding space should be validat
 
 **Semantic maps** — UMAP projections of the fine-tuned embeddings, coloured by class label. A well-adjusted space shows tighter, more separated clusters compared to the base model projection. Visual comparison between the base and fine-tuned maps is the most direct signal that the adjustment worked.
 
-The comparison below shows the same data before and after fine-tuning. The top plot (base model) shows merged, overlapping clusters with a large -1 outlier mass. The bottom plot (fine-tuned) shows the same clusters separated into distinct regions with the -1 cluster substantially reduced:
+**Base model** — clusters are merged and bleeding into each other; individual topics are hard to distinguish within the dense central region:
 
-![Base vs fine-tuned semantic map](figures/semantic-map-comparison.png)
+![Base model semantic map](figures/semantic-map-base.png)
+
+**Fine-tuned model** — the same clusters are now separated into distinct islands with clear gaps between them; the embedding space has been reorganised around the analytical distinctions the model was trained on:
+
+![Fine-tuned model semantic map](figures/semantic-map-fine-tuned.png)
 
 **Silhouette score** — measures how well each point fits its own cluster relative to neighbouring clusters (cosine distance). Higher scores after fine-tuning confirm increased intra-cluster cohesion and inter-cluster separation.
 
