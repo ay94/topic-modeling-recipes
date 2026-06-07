@@ -18,7 +18,7 @@ Documents are self-contained. If you already know topic modelling, go directly t
 | [Sampling & Extrapolation](docs/sampling/) | The UMAP extrapolation problem and how to handle datasets too large to model in full |
 | [Outlier Mitigation](docs/outliers/) | What to do with HDBSCAN's -1 cluster — soft clustering, k-means, and KNN-based classification at scale |
 | [Layered Topic Modelling](docs/layered/) | Iterative modelling passes for heterogeneous or complex corpora |
-| [Guided Topic Modelling](docs/guided/) | Contrastive learning to steer the embedding space toward predefined analytical objectives |
+| [Guided Topic Modelling](docs/guided/) | Contrastive learning to untangle cluttered clusters, clean noisy ones, or enforce a predefined analytical framework — with pairing strategies, loss functions, and a full evaluation methodology |
 | [Evaluation](docs/evaluation/) | Review vs blind evaluation, stratified vs general sampling, and a hybrid approach |
 | [Translation](docs/translation/) | Source text vs translated text for clustering — empirical comparison and when each approach is appropriate |
 
@@ -50,8 +50,8 @@ The -1 cluster typically captures 40–60% of data and is not noise — it is fr
 ### Your data is multilingual
 → [`docs/translation/`](docs/translation/) — covers whether to cluster on source text or translated text, with empirical findings on topic homogeneity across setups
 
-### You have predefined categories to find
-→ [`docs/guided/`](docs/guided/) — contrastive learning to steer the embedding space toward your analytical framework rather than discovering whatever emerges
+### Your clusters need refinement (cluttered, noisy, or analytically misaligned)
+→ [`docs/guided/`](docs/guided/) — contrastive learning to untangle merged clusters, clean noisy ones, or steer the embedding space toward a predefined analytical framework
 
 ### Your topics are too broad or heterogeneous
 → [`docs/layered/`](docs/layered/) — apply successive modelling layers to progressively refine structure without predefined classifiers
