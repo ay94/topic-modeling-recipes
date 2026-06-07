@@ -20,11 +20,24 @@ Guided topic modelling addresses this by adjusting the embedding space itself �
 
 ## The Approach
 
-The core mechanism is contrastive learning: fine-tuning a sentence transformer using explicit positive and negative labels derived from cluster output.
+The core mechanism is contrastive learning: fine-tuning a sentence transformer using explicit positive and negative labels derived from cluster output or analyst annotation.
 
-Positive pairs are messages that belong together analytically. Negative pairs are messages that should be separated. The model is trained to bring positives closer together in the embedding space and push negatives apart. This reshapes the space so that subsequent UMAP reduction and HDBSCAN clustering produce boundaries that reflect the intended analytical distinctions rather than the model's default ones.
+- **Positive pairs** — messages that belong together analytically (drawn from the same class or cluster)
+- **Negative pairs** — messages that should be separated (drawn from different classes or clusters)
 
-In practice this is implemented via **SetFit** — a few-shot fine-tuning approach that requires only a small number of labelled examples (typically 8–16 per class) drawn from existing cluster output. No large labelled dataset is required; the cluster output itself provides the training signal.
+The model is trained to bring positives closer in the embedding space and push negatives apart. This reshapes the space so that subsequent UMAP reduction and HDBSCAN clustering produce boundaries that reflect the intended analytical distinctions rather than the model's defaults.
+
+### Pairing strategies
+
+**Default** — generates all pairwise combinations within each class up to a sample size cap, then pairs each positive with negatives from all other classes. Thorough but can be imbalanced when class sizes differ significantly.
+
+**Stratified** — generates a fixed number of pairs with even representation across classes. Better when classes are unequal in size and a balanced training signal is needed.
+
+### Loss functions
+
+**Contrastive loss** — works directly on pairs labelled as similar (1) or dissimilar (0). Straightforward to set up from cluster output; the natural choice when positive and negative examples are clearly defined.
+
+**Triplet loss** — works on anchor–positive–negative triples, optimising the margin between positive and negative distance simultaneously. More expressive but requires constructing triples rather than pairs.
 
 ---
 
@@ -38,7 +51,7 @@ Label a sample of messages from the merged cluster as positive (the target narra
 
 ### Clean noisy clusters
 
-A cluster contains a core narrative but absorbs a significant volume of off-topic content — messages that are loosely associated with the theme but analytically irrelevant. The `-1` outlier rate is acceptable overall but the cluster's internal precision is low.
+A cluster contains a core narrative but absorbs a significant volume of off-topic content. The `-1` outlier rate is acceptable overall but the cluster's internal precision is low.
 
 Label the core content as positive and the noise as negative. Fine-tuning tightens the cluster's boundary in the embedding space, making it denser and more coherent. HDBSCAN produces a smaller, cleaner cluster with a higher proportion of genuinely relevant content.
 
@@ -50,32 +63,44 @@ Label examples from each category. Fine-tuning orientates the embedding space to
 
 ---
 
-## Practical Notes
+## Evaluating the Fine-Tuned Embedding Space
 
-**Few-shot is sufficient.** SetFit is designed for low-resource settings. 8 positive and 8 negative examples per class are typically enough to produce meaningful embedding adjustment. The cluster output from a prior modelling run is the natural source for these examples — no separate annotation effort is needed.
+Before rerunning topic modelling, the adjusted embedding space should be validated. The goal is to confirm that fine-tuning produced meaningful separation — not just to check that training loss decreased.
+
+**Semantic maps** — UMAP projections of the fine-tuned embeddings, coloured by class label. A well-adjusted space shows tighter, more separated clusters compared to the base model projection. Visual comparison between the base and fine-tuned maps is the most direct signal that the adjustment worked.
+
+**Silhouette score** — measures how well each point fits its own cluster relative to neighbouring clusters (cosine distance). Higher scores after fine-tuning confirm increased intra-cluster cohesion and inter-cluster separation.
+
+**Average intra-class cosine similarity** — tracks whether messages within the same class are moving closer together in the embedding space. Increasing average similarity after fine-tuning is a direct measure of the intended effect.
+
+**Similarity matrix** — a class × class matrix of average pairwise cosine similarity. Well-separated classes should show high values on the diagonal (intra-class) and low values off-diagonal (inter-class). Comparing this matrix before and after fine-tuning shows which class boundaries improved and which remain problematic.
+
+**kNN classification** — a k-nearest-neighbour classifier trained on exemplar embeddings and evaluated on held-out data. Classification accuracy and per-class F1 provide a quantitative measure of how well the embedding space separates the target categories. This is the most rigorous validation step: it tests whether the adjusted space generalises beyond the training pairs.
+
+---
+
+## Practical Notes
 
 **This fits between layers.** Guided modelling is most naturally used between topic model layers: run a first-pass model, identify a cluster that needs refinement, fine-tune on examples from that cluster, rerun the model on the sub-corpus with adjusted embeddings. See [`docs/layered/`](../layered/) for the full layered approach.
 
 **It does not replace parameter tuning.** If a cluster is cluttered because UMAP `n_components` is too low or HDBSCAN `min_cluster_size` is too large, parameter tuning will resolve it more efficiently. Guided modelling is for cases where parameter changes do not help — where the issue is in the embedding space rather than the clustering configuration.
 
-**Performance.** In production use on a 10-fold cross-validation:
+**Exemplars matter.** The kNN classifier (and the quality of the fine-tuning) depends on the exemplar set — the representative messages used to define each class. Poor exemplar selection propagates through the entire evaluation. Sample exemplars carefully from the core of each cluster, not the periphery.
 
-| Metric | Mean | Min | Max |
-|---|---|---|---|
-| Accuracy | 0.861 | 0.816 | 0.931 |
-| Precision | 0.857 | 0.828 | 0.924 |
-| Recall | 0.855 | 0.816 | 0.928 |
-| F1 | 0.854 | 0.818 | 0.926 |
-
-Human validation agreement on held-out data: **0.90 accuracy**.
+**Compare base vs. fine-tuned explicitly.** Run all four evaluation steps (semantic map, silhouette, similarity matrix, kNN) on both the base model embeddings and the fine-tuned embeddings. The comparison is the result — not the absolute values.
 
 ---
 
 ## Checklist
 
-- [ ] First-pass topic model run and clusters inspected
-- [ ] Problem type identified: cluttered / noisy / predefined framework
-- [ ] Positive and negative examples sampled from cluster output (8–16 per class minimum)
-- [ ] SetFit fine-tuning run and embedding space validated before rerunning topic model
-- [ ] Post-refinement clusters inspected and compared to pre-refinement output
+- [ ] First-pass topic model run and problem clusters identified
+- [ ] Problem type confirmed: cluttered / noisy / predefined framework
+- [ ] Positive and negative examples labelled from cluster output
+- [ ] Pairing strategy chosen (default or stratified) and dataset generated
+- [ ] Loss function selected (contrastive or triplet) and model fine-tuned
+- [ ] Semantic maps compared: base vs. fine-tuned
+- [ ] Silhouette scores and average intra-class similarity compared pre/post fine-tuning
+- [ ] Similarity matrix checked for improved diagonal dominance
+- [ ] kNN classifier trained on exemplars and evaluated on held-out data
+- [ ] Post-refinement topic model run and clusters inspected against pre-refinement output
 - [ ] If used between layers: annotation schema updated to reflect refined cluster boundaries
