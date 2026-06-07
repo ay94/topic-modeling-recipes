@@ -93,7 +93,13 @@ Key rules:
 - A single description may apply to multiple messages if they share similar content and align with that description's definition.
 - The description that appears most frequently across all messages in the sample is designated as the **overall topic description**.
 
-This approach ensures that diverse narratives within a topic are captured explicitly — different descriptions for different messages — rather than being compressed into a single approximation. The per-message structure also makes the annotation auditable: each description assignment can be reviewed individually.
+The key advantage over the standard approach is **traceability**. Previously, reviewing 10 messages and producing a single summary left no record of which messages contributed to it — re-evaluation meant re-reviewing the sample from scratch. Here, every message in the sample is linked to a specific description, so the full annotation can be audited and revisited at the message level.
+
+This granularity also produces a richer understanding of the topic. Because annotators engage with individual messages rather than inferring a summary from a small window, the descriptions reflect what the topic actually contains. This pays off in several ways:
+
+- **Evaluation** — precise per-message descriptions reduce the number of evaluation iterations needed; when performance is poor, it is clear which messages drove which description, making failure diagnosis more straightforward.
+- **Decision-making** — individual messages can be used to steer topics in different directions: identifying sub-narratives, seeding guided models, or filtering specific content.
+- **Example selection** — annotated messages serve directly as labelled examples for downstream tasks such as classification, without requiring a separate labelling step.
 
 The workload is higher than the standard approach, particularly for large topics. The stopping criteria below are designed to bound this workload.
 
