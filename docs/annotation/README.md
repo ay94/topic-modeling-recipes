@@ -71,6 +71,50 @@ Topic homogeneity is therefore a necessary but not sufficient condition: a topic
 
 The key distinctions of the granular approach lie in three areas: the **sampling strategy**, the **annotation process**, and the **stopping criteria**.
 
+```mermaid
+flowchart TD
+    A([Topic model ready]) --> B[Compute 10% sample\nper topic]
+    B --> C[Build sample size distribution\nacross all topics]
+
+    C --> D["Set review-all threshold\nmax(20, 25th pct of sample distribution)"]
+    C --> E["Set annotation patience\n50th or 75th pct of\niteration distribution"]
+
+    D --> F
+    E --> F
+
+    F{For each topic:\nsample ≤ threshold?}
+    F -->|Yes — small topic| G[Review all messages\nNo stopping criterion]
+    F -->|No — large topic| H[Divide sample into\niterations of 10 messages]
+
+    H --> I[Annotate iteration\nassign description per message]
+    I --> J[Compute entropy]
+    J --> K{Entropy stable across\nN consecutive iterations?}
+    K -->|Yes — patience reached| STOP
+    K -->|No — fluctuating| M{Patience + 1\nextension used?}
+    M -->|Yes| STOP
+    M -->|No| N{More messages\nin sample?}
+    N -->|Yes| I
+    N -->|No| STOP
+
+    STOP([Stop annotation])
+    G --> O
+    STOP --> O
+
+    O[Compute normalised entropy\nH·X· ÷ log₂·n·]
+    O --> P{Normalised\nentropy > 0.5?}
+    P -->|Yes| Q([Heterogeneous\nflag for review])
+    P -->|No| R([Homogeneous\nproceed to theme map])
+
+    classDef process fill:#ffffff,stroke:#1B1A18,stroke-width:1.5px,color:#1B1A18
+    classDef decision fill:#C8A876,stroke:#1B1A18,stroke-width:1.5px,color:#1B1A18,font-weight:bold
+    classDef terminal fill:#1B1A18,stroke:#1B1A18,color:#ffffff,stroke-width:1.5px
+    classDef data fill:#F4EFE5,stroke:#1B1A18,stroke-width:1.5px,color:#1B1A18
+
+    class A,STOP,Q,R terminal
+    class F,K,M,N,P decision
+    class B,C,D,E,G,H,I,J,O process
+```
+
 ---
 
 ### Sampling Strategy
@@ -107,9 +151,13 @@ The workload is higher than the standard approach, particularly for large topics
 
 ### Stopping Criteria
 
-For **small topics** (sample size fewer than 20 messages), annotators review all messages without a stopping criterion.
+The threshold between "review all" and "use entropy stopping" is set from the data rather than fixed in advance. Compute the 10% sample size for every topic in the model and take the **25th percentile** of that distribution. Topics at or below this threshold are reviewed in full; topics above it use entropy-based early stopping.
 
-For **larger topics** (sample size exceeding 20 messages), the stopping criterion is based on **entropy** — a measure of the variety or diversity in the descriptions assigned so far. High entropy indicates a heterogeneous topic (many different descriptions); low entropy indicates a homogeneous topic (one or a few descriptions dominate).
+There is also a hard floor: early stopping requires at least two consecutive entropy values to compare — one from iteration 1, one from iteration 2. A sample of fewer than 20 messages yields only one iteration of 10 messages, making the stability check impossible. If the 25th percentile of the sample distribution falls below 20, the threshold defaults to 20.
+
+In summary: the cutoff is **max(20, 25th percentile of 10% sample distribution)**. Topics at or below the cutoff are reviewed in full. Topics above it use entropy-based stopping.
+
+For topics above the threshold, the stopping criterion is based on **entropy** — a measure of the variety or diversity in the descriptions assigned so far. High entropy indicates a heterogeneous topic (many different descriptions); low entropy indicates a homogeneous topic (one or a few descriptions dominate).
 
 #### Entropy Calculation
 
@@ -172,8 +220,9 @@ Annotation patience is not fixed for the full annotation run. As annotation proc
 ### Sampling Procedure
 
 1. Sample **10%** of messages from each topic.
-2. For samples larger than 20 messages, divide into **iterations of 10 messages**. For samples of 20 or fewer, treat the entire sample as one iteration.
-3. Record two pieces of information for each message: the message itself, and its assigned description along with the definition of that description.
+2. Compute the 25th percentile of the resulting sample size distribution. Set the review-all threshold to max(20, 25th percentile).
+3. For samples at or below the threshold, treat the entire sample as one iteration. For samples above the threshold, divide into **iterations of 10 messages**.
+4. Record two pieces of information for each message: the message itself, and its assigned description along with the definition of that description.
 
 ### Annotation Procedure
 
@@ -183,9 +232,9 @@ Annotation patience is not fixed for the full annotation run. As annotation proc
 
 ### Stopping Criteria
 
-**Small samples (fewer than 20 messages):** Review all messages. No stopping criterion applied.
+**Small samples (at or below threshold):** Review all messages. No stopping criterion applied. The threshold is max(20, 25th percentile of 10% sample distribution) — the floor of 20 exists because early stopping requires at least two iterations to compare entropy values.
 
-**Larger samples (20 or more messages):**
+**Larger samples (above threshold):**
 
 1. Calculate entropy after each iteration of 10 messages.
 2. Apply early stopping based on annotation patience:
@@ -233,25 +282,27 @@ Annotating each message individually is more time-consuming than reviewing a 10-
 
 ### Hyperparameter validation
 
-The key hyperparameters — sample proportion, annotation patience, and the entropy threshold — are empirically motivated but have not been formally validated across a wide range of project types and corpus sizes. Optimal values may vary. Over time, as more annotation data is accumulated, it may be possible to develop a regression model that predicts expected annotation accuracy from entropy, but this requires repeated application of the scheme across multiple projects.
+The key hyperparameters — sample proportion, annotation patience, and the entropy threshold — are empirically motivated but have not been formally validated across a wide range of project types and corpus sizes. Optimal values may vary across different corpus characteristics and project goals.
+
+Over time, as more annotation data is accumulated, there is potential to develop a regression model that learns the relationship between entropy and labelling accuracy. Such a model could predict the expected accuracy of new topics based on their entropy before full annotation is completed — enabling earlier decisions about whether a topic warrants further review. However, this requires the scheme to be applied repeatedly across multiple projects so that sufficient training data accumulates.
 
 ### Representativeness questions
 
-The 10% sampling ratio is more methodologically defensible than a fixed count, but representativeness can still be questioned for very large topics where 10% is a substantial number of messages, or very small topics where 10% is fewer than 3 messages.
+The 10% sampling ratio is more methodologically defensible than a fixed count, but representativeness can still be questioned for very large topics where 10% is a substantial number of messages, or very small topics where 10% is fewer than 3 messages. This calls for ongoing evaluation of whether the chosen ratio accurately reflects the broader topic, and possibly refinement of the sampling strategy as more projects are completed.
 
 ### Stopping criteria need further development
 
-The entropy-based stopping criterion, particularly for samples that fluctuate around the threshold, may require additional criteria to ensure reliable decisions. The silhouette score applied to the full topic dataset is one candidate for a complementary stopping signal.
+The entropy-based stopping criterion, particularly for samples that fluctuate around the threshold, may require additional criteria to ensure both efficiency and accuracy. Stopping too early risks misclassifying a borderline topic; stopping too late wastes annotation effort. The silhouette score applied to the full topic dataset is one candidate for a complementary signal — it provides a cluster-level homogeneity measure independent of the annotation labels and could confirm or challenge entropy-based conclusions.
 
 ### Requires interactive tooling
 
-Effective implementation requires annotators to monitor entropy values in real time across iterations and interact with message-level examples. The annotation process as described requires purpose-built tooling — it is not straightforward to implement in a general-purpose spreadsheet.
+Effective implementation requires annotators to visually interact with message-level examples and monitor entropy values in real time across iterations. The annotation process as described requires purpose-built tooling — annotators need to see messages iteration by iteration, track entropy as it evolves, and act on the patience signal when it is reached. This is not straightforward to implement in a general-purpose spreadsheet.
 
 ---
 
 ## Future Work
 
-**Sampling strategy** — develop a statistical framework to rigorously test whether the 10% sample is representative of the full topic. Explore predictive models that determine the most effective sampling ratio as a function of topic size and corpus characteristics.
+**Sampling strategy** — develop a statistical framework to rigorously test whether the 10% sample is representative of the full topic. Explore predictive models that determine the most effective sampling ratio as a function of topic size and corpus characteristics — this would involve analysing annotation data accumulated across projects to identify patterns and correlations between topic size and the sampling ratio that produces reliable descriptions.
 
 **Stopping criteria** — integrate additional stopping signals alongside entropy. The silhouette score applied to the full topic dataset is a natural candidate: it provides a cluster-level homogeneity measure that is independent of the annotation labels and could confirm or challenge entropy-based conclusions.
 
@@ -263,7 +314,8 @@ Effective implementation requires annotators to monitor entropy values in real t
 
 - [ ] Topic model run and topics identified
 - [ ] 10% sample drawn per topic
-- [ ] Sample size determined: small (< 20 messages, single iteration) or large (≥ 20 messages, multiple iterations of 10)
+- [ ] Review-all threshold computed: max(20, 25th percentile of 10% sample distribution)
+- [ ] Sample size classified: at or below threshold (review all) or above threshold (entropy stopping with iterations of 10)
 - [ ] Annotation patience set based on topic size distribution
 - [ ] Each message in the sample annotated with an individual description
 - [ ] Entropy calculated after each iteration for large topics
