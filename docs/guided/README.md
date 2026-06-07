@@ -97,9 +97,11 @@ Label examples from each category. Fine-tuning orientates the embedding space to
 
 ## Evaluating the Fine-Tuned Embedding Space
 
-Before rerunning topic modelling, the adjusted embedding space should be validated. The goal is to confirm that fine-tuning produced meaningful separation — not just to check that training loss decreased.
+Before rerunning topic modelling, the adjusted embedding space should be validated. The goal is to confirm that fine-tuning produced meaningful separation — not just to check that training loss decreased. The validation runs in order: visual inspection first, then quantitative confirmation.
 
-**Semantic maps** — UMAP projections of the fine-tuned embeddings, coloured by class label. A well-adjusted space shows tighter, more separated clusters compared to the base model projection. Visual comparison between the base and fine-tuned maps is the most direct signal that the adjustment worked.
+### 1. Visual inspection — semantic maps
+
+The first step is to look at the embedding space directly. UMAP projections coloured by class label make the effect of fine-tuning immediately visible — or reveal that it did not work. This is the fastest signal and should be checked before running any quantitative metrics.
 
 **Base model** — clusters are merged and bleeding into each other; individual topics are hard to distinguish within the dense central region:
 
@@ -109,13 +111,23 @@ Before rerunning topic modelling, the adjusted embedding space should be validat
 
 ![Fine-tuned model semantic map](figures/semantic-map-fine-tuned.png)
 
-**Silhouette score** — measures how well each point fits its own cluster relative to neighbouring clusters (cosine distance). Higher scores after fine-tuning confirm increased intra-cluster cohesion and inter-cluster separation.
+If the semantic maps do not show visible improvement, the remaining steps are unlikely to show it either — revisit the training data quality or pairing strategy before continuing.
 
-**Average intra-class cosine similarity** — tracks whether messages within the same class are moving closer together in the embedding space. Increasing average similarity after fine-tuning is a direct measure of the intended effect.
+### 2. Silhouette score
 
-**Similarity matrix** — a class × class matrix of average pairwise cosine similarity. Well-separated classes should show high values on the diagonal (intra-class) and low values off-diagonal (inter-class). Comparing this matrix before and after fine-tuning shows which class boundaries improved and which remain problematic.
+Measures how well each point fits its own cluster relative to neighbouring clusters (cosine distance). Higher scores after fine-tuning confirm that the visual separation seen in the semantic maps reflects a genuine increase in intra-cluster cohesion and inter-cluster distance.
 
-**kNN classification** — a k-nearest-neighbour classifier trained on exemplar embeddings and evaluated on held-out data. Classification accuracy and per-class F1 provide a quantitative measure of how well the embedding space separates the target categories. This is the most rigorous validation step: it tests whether the adjusted space generalises beyond the training pairs.
+### 3. Average intra-class cosine similarity
+
+Tracks whether messages within the same class are moving closer together in the embedding space. Increasing average similarity after fine-tuning is a direct measure of the intended effect — the model is pulling the same-class representations toward each other.
+
+### 4. Similarity matrix
+
+A class × class matrix of average pairwise cosine similarity. Well-separated classes show high values on the diagonal (intra-class) and low values off-diagonal (inter-class). Comparing this matrix before and after fine-tuning shows which specific class boundaries improved and which remain problematic.
+
+### 5. kNN classification
+
+A k-nearest-neighbour classifier trained on exemplar embeddings and evaluated on held-out data. Classification accuracy and per-class F1 provide the most rigorous quantitative validation: they test whether the adjusted embedding space generalises beyond the training pairs to unseen data. This is the final confirmation that fine-tuning produced a space that is useful in practice.
 
 ---
 
