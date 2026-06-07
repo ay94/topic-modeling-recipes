@@ -79,7 +79,9 @@ Preprocessing quality directly affects the quality of topic representations. Ele
 
 **Objective:** Convert each message into a numerical vector that captures its semantic meaning.
 
-Each preprocessed message is passed through an **embedding model** — typically a transformer model trained on sentence similarity tasks. The model produces a high-dimensional vector for each message, where position in vector space reflects meaning in context rather than surface-level keywords. Messages that are semantically similar will have embeddings that are close together in this space.
+Each preprocessed message is converted into a **contextualised vector** — an embedding — that captures the semantic essence of the text rather than its lexical characteristics. Two messages can use different words and mean the same thing, or use the same word and mean different things; embeddings reflect these contextual nuances rather than surface form. Messages that are semantically similar will have embeddings that are close together in this high-dimensional space.
+
+This transformation is achieved using **transformer models**, via a library such as `sentence-transformers`. These models are trained specifically on sentence similarity tasks and take preprocessed messages as input to produce embeddings that reflect each message's meaning in context. The resulting embeddings are the foundation for the next stage: clustering messages into topics based on contextual similarity rather than keyword overlap.
 
 **Practical consideration:** transformer models have a maximum sequence length (`max_seq_length`) that determines how many tokens are processed per message. Content beyond this limit is truncated. Model selection should account for typical message length in the dataset and the trade-off between model size, speed, and linguistic range (multilingual vs monolingual, general vs domain-specific).
 
@@ -90,6 +92,8 @@ Each preprocessed message is passed through an **embedding model** — typically
 **Objective:** Segment the embedding space into clusters, each representing a topic, and produce a keyword representation for each.
 
 This stage has three components — dimensionality reduction, clustering, and keyword extraction — that can be run via a dedicated topic modelling library (such as **BERTopic** or **TrueTopic**) or assembled from individual components (e.g. `umap-learn`, `hdbscan` from scikit-learn or standalone).
+
+BERTopic takes as input the collection of messages and their corresponding embeddings. These embeddings are high-dimensional representations — each dimension contributes to the overall position in the semantic space, but individual dimensions are not interpretable in isolation. This high dimensionality makes direct clustering impractical, which is why dimensionality reduction is applied first.
 
 ### Dimensionality Reduction — UMAP
 
