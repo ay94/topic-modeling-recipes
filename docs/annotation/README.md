@@ -71,50 +71,6 @@ Topic homogeneity is therefore a necessary but not sufficient condition: a topic
 
 The key distinctions of the granular approach lie in three areas: the **sampling strategy**, the **annotation process**, and the **stopping criteria**.
 
-```mermaid
-flowchart TD
-    A([Topic model ready]) --> B[Compute 10% sample\nper topic]
-    B --> C[Build sample size distribution\nacross all topics]
-
-    C --> D["Set review-all threshold\nmax(20, 25th pct of sample distribution)"]
-    C --> E["Set annotation patience\n50th or 75th pct of\niteration distribution"]
-
-    D --> F
-    E --> F
-
-    F{For each topic:\nsample ≤ threshold?}
-    F -->|Yes — small topic| G[Review all messages\nNo stopping criterion]
-    F -->|No — large topic| H[Divide sample into\niterations of 10 messages]
-
-    H --> I[Annotate iteration\nassign description per message]
-    I --> J[Compute entropy]
-    J --> K{Entropy stable across\nN consecutive iterations?}
-    K -->|Yes — patience reached| STOP
-    K -->|No — fluctuating| M{Patience + 1\nextension used?}
-    M -->|Yes| STOP
-    M -->|No| N{More messages\nin sample?}
-    N -->|Yes| I
-    N -->|No| STOP
-
-    STOP([Stop annotation])
-    G --> O
-    STOP --> O
-
-    O[Compute normalised entropy\nH·X· ÷ log₂·n·]
-    O --> P{Normalised\nentropy > 0.5?}
-    P -->|Yes| Q([Heterogeneous\nflag for review])
-    P -->|No| R([Homogeneous\nproceed to theme map])
-
-    classDef process fill:#ffffff,stroke:#1B1A18,stroke-width:1.5px,color:#1B1A18
-    classDef decision fill:#C8A876,stroke:#1B1A18,stroke-width:1.5px,color:#1B1A18,font-weight:bold
-    classDef terminal fill:#1B1A18,stroke:#1B1A18,color:#ffffff,stroke-width:1.5px
-    classDef data fill:#F4EFE5,stroke:#1B1A18,stroke-width:1.5px,color:#1B1A18
-
-    class A,STOP,Q,R terminal
-    class F,K,M,N,P decision
-    class B,C,D,E,G,H,I,J,O process
-```
-
 ---
 
 ### Sampling Strategy
@@ -212,6 +168,52 @@ The choice of percentile is a project-level decision made before annotation begi
 **Example:** a model with 100 topics. For each topic, compute its 10% sample and divide by 10 to get iteration count. If the 75th percentile of that distribution is 6, set patience = 6 — meaning annotation stops after 6 consecutive stable-entropy iterations (60 messages reviewed per topic at most).
 
 Annotation patience is not fixed for the full annotation run. As annotation proceeds and the homogeneity landscape of the model becomes clearer, patience can be progressively reduced for remaining topics.
+
+---
+
+```mermaid
+flowchart TD
+    A([Topic model ready]) --> B[Compute 10% sample\nper topic]
+    B --> C[Build sample size distribution\nacross all topics]
+
+    C --> D["Set review-all threshold\nmax(20, 25th pct of sample distribution)"]
+    C --> E["Set annotation patience\n50th or 75th pct of\niteration distribution"]
+
+    D --> F
+    E --> F
+
+    F{For each topic:\nsample ≤ threshold?}
+    F -->|Yes — small topic| G[Review all messages\nNo stopping criterion]
+    F -->|No — large topic| H[Divide sample into\niterations of 10 messages]
+
+    H --> I[Annotate iteration\nassign description per message]
+    I --> J[Compute entropy]
+    J --> K{Entropy stable across\nN consecutive iterations?}
+    K -->|Yes — patience reached| STOP
+    K -->|No — fluctuating| M{Patience + 1\nextension used?}
+    M -->|Yes| STOP
+    M -->|No| N{More messages\nin sample?}
+    N -->|Yes| I
+    N -->|No| STOP
+
+    STOP([Stop annotation])
+    G --> O
+    STOP --> O
+
+    O[Compute normalised entropy\nH·X· ÷ log₂·n·]
+    O --> P{Normalised\nentropy > 0.5?}
+    P -->|Yes| Q([Heterogeneous\nflag for review])
+    P -->|No| R([Homogeneous\nproceed to theme map])
+
+    classDef process fill:#ffffff,stroke:#1B1A18,stroke-width:1.5px,color:#1B1A18
+    classDef decision fill:#C8A876,stroke:#1B1A18,stroke-width:1.5px,color:#1B1A18,font-weight:bold
+    classDef terminal fill:#1B1A18,stroke:#1B1A18,color:#ffffff,stroke-width:1.5px
+    classDef data fill:#F4EFE5,stroke:#1B1A18,stroke-width:1.5px,color:#1B1A18
+
+    class A,STOP,Q,R terminal
+    class F,K,M,N,P decision
+    class B,C,D,E,G,H,I,J,O process
+```
 
 ---
 
