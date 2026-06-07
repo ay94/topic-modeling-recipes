@@ -1,6 +1,6 @@
 # Granular Annotation Scheme
 
-An alternative to fixed-sample annotation that uses proportional sampling, per-message description, and entropy-based stopping criteria to produce more rigorous and methodologically defensible topic annotations.
+The standard topic annotation method selects a fixed sample per topic — 5 or 10 messages — and passes or fails sub-themes against a 7-out-of-10 rule. This document introduces the granular annotation scheme: a more rigorous replacement that uses proportional sampling, per-message description, and entropy-based stopping criteria.
 
 > **Cross-references:**
 > - Core pipeline context: [`docs/workflow/`](../workflow/)
@@ -23,7 +23,7 @@ The granular scheme replaces this with:
 - **Entropy-based stopping criteria** — measures description diversity to determine when a topic is sufficiently characterised, without reviewing the full sample
 - **Annotation patience** — a hyperparameter that bounds the number of annotation iterations before a decision is made
 
-The pipeline context is the same in both cases. Topic modelling (sentence transformers → UMAP → HDBSCAN, typically via BERTopic with c-TF-IDF for keyword extraction) produces topics. What follows is the annotation phase: analysing each topic, understanding its overarching narrative, and organising these narratives into a **topic theme map** that assigns each topic and its corresponding messages to specific sub-themes and themes. The granular scheme governs how that annotation phase is conducted.
+The pipeline context is the same in both cases — topic modelling produces topics, and the annotation phase follows. For the full pipeline steps (embedding, UMAP, HDBSCAN, BERTopic, topic theme map construction), see [`docs/workflow/`](../workflow/). The granular scheme governs how the annotation phase of that pipeline is conducted.
 
 ---
 
