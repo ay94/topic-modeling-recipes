@@ -27,6 +27,8 @@ The core mechanism is contrastive learning: fine-tuning a sentence transformer u
 
 The model is trained to bring positives closer in the embedding space and push negatives apart. This reshapes the space so that subsequent UMAP reduction and HDBSCAN clustering produce boundaries that reflect the intended analytical distinctions rather than the model's defaults.
 
+Two implementations are available depending on the use case. One approach is **SetFit** — a few-shot fine-tuning framework from HuggingFace (see the [SetFit library](https://github.com/huggingface/setfit)) that requires only a small number of labelled examples (typically 8–16 per class) drawn from existing cluster output. No large labelled dataset is required; the cluster output itself provides the training signal. A SetFit-based implementation is also available in the [`multilingual-topic-modeling`](https://github.com/ay94/multilingual-topic-modeling) library. The other approach is a **full contrastive learning pipeline** — training directly with contrastive or triplet loss on positive and negative pairs, with explicit control over pairing strategy, loss function, and evaluation. An implementation of this approach is available in [this repository](<!-- TODO: add repo link when published -->).
+
 ### Pairing strategies
 
 **Default** — generates all pairwise combinations within each class up to a sample size cap, then pairs each positive with negatives from all other classes. Thorough but can be imbalanced when class sizes differ significantly.
