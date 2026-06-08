@@ -32,16 +32,16 @@ HDBSCAN is a density-based clustering algorithm designed to identify clusters of
 The algorithm proceeds in four steps:
 
 **1. Minimum Spanning Tree (MST)**
-HDBSCAN constructs an MST over the dataset — a tree-like structure connecting all data points with the minimum possible total edge length. This reveals the underlying connectivity between points without imposing a fixed shape.
+HDBSCAN constructs an MST over the dataset — a tree-like structure connecting all data points with the minimum possible total edge length (the sum of the lengths of all potential edges in a graph). This reveals the underlying connectivity between points without imposing a fixed shape.
 
 **2. Single Linkage Clustering**
 Clusters are formed by progressively joining points with the shortest distance between them. HDBSCAN employs varied distance metrics across different points for robustness, rather than applying a single global threshold.
 
 **3. Condensed Dendrogram**
-The resulting hierarchy is represented as a dendrogram. A condensed version is created by removing branches that do not significantly contribute to the clustering structure — this condensation aids in identifying stable, meaningful clusters rather than transient groupings.
+The resulting hierarchy is represented as a dendrogram, and a condensed version of this dendrogram is created by removing branches that do not significantly contribute to the clustering structure. This condensation aids in identifying stable clusters by stripping away transient or insignificant groupings.
 
 **4. Stability**
-HDBSCAN emphasises stability: areas in the condensed tree where branches persist across the hierarchy are treated as robust clusters. This makes the algorithm resilient to noise and ensures that identified topics consistently appear across different levels of analysis.
+HDBSCAN emphasises the stability of clusters by identifying areas in the condensed tree where branches persist. This ensures robustness against noise and identifies clusters that consistently appear across different perspectives on the data.
 
 ---
 
