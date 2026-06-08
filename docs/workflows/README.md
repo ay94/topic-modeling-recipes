@@ -32,7 +32,30 @@ These components are selectively applied depending on the project's requirements
 
 It is important to recognise that while the generic components form the backbone of any topic modelling project, the intricacies of their implementation may differ based on the unique demands of each project. Conversely, the project-specific components are selectively applied, dependent on the project's specific requirements and goals. Figure 1 presents a graphical representation of the architecture, with arrows indicating the order of execution.
 
-![Figure 1: Topic Modelling Architecture](architecture.png)
+```mermaid
+flowchart LR
+    subgraph GC["Generic Components"]
+        direction TB
+        A[Data Preprocessing] --> B[Embedding Extraction]
+        B --> C[Parameter Tuning]
+        C --> D[Topic Modeling]
+        D --> E[Storage]
+    end
+
+    subgraph PSC["Project-Specific Components"]
+        direction TB
+        F[Thematic Mapping] --> G[Evaluation]
+        F --> H[Guided Topic Modelling]
+        H --> G
+        H --> I[Analysis & Reporting]
+    end
+
+    classDef process fill:#ffffff,stroke:#1B1A18,stroke-width:1.5px,color:#1B1A18
+    classDef data fill:#F4EFE5,stroke:#1B1A18,stroke-width:1.5px,color:#1B1A18
+
+    class A,B,C,D,F,G,H process
+    class E,I data
+```
 
 ---
 
