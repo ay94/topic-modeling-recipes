@@ -176,13 +176,19 @@ The following examples from past projects illustrate how annotation schemes were
 
 #### Annotation Scheme Methodological Considerations
 
-1. Align the annotation scheme with the project's objectives and analysis nature
-2. Build flexibility into the scheme — one-size-fits-all does not work across varied datasets
-3. Communicate annotation objectives clearly between analyst and annotator
-4. Develop a methodologically sound and practical rationale for sample size
-5. Establish explicit criteria for balancing qualitative and quantitative analysis
-6. Create guidelines for heterogeneous topics that do not fit neatly into predefined themes
-7. Document all annotation decisions and their justifications
+1. **Analysis nature consideration** — align the annotation scheme with the project's objectives and the nature of the analysis.
+
+2. **Flexibility in annotation criteria** — develop an annotation scheme that can adapt to the diverse nature of datasets. This includes flexibility in the number of messages sampled per topic and the criteria for thematic categorisation. A one-size-fits-all approach may not be effective given the variability in data across different projects.
+
+3. **Clarification of annotation objectives** — ensure clear communication of the annotation objectives to all team members, especially between analysts and annotators.
+
+4. **Sample size justification** — develop a rationale for the chosen sample size that is both methodologically sound and practical. This should take into account the project's scope, the nature of the data, and the resources available.
+
+5. **Balancing qualitative and quantitative analysis** — establish a clear methodology for balancing qualitative and quantitative aspects in the annotation process. This involves deciding when to focus on the quantity of relevant messages versus the qualitative depth of the narratives they convey.
+
+6. **Handling of heterogeneous topics** — create guidelines for dealing with heterogeneous topics that may not neatly fit into predefined themes. This could include strategies for theme assignment and handling ambiguous or overlapping narratives.
+
+7. **Documentation of annotation decisions** — maintain comprehensive documentation of all annotation decisions and their justifications.
 
 #### Proposed Annotation Scheme
 
