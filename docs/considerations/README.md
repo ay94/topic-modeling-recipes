@@ -91,6 +91,8 @@ The topic modelling stage encompasses methodological considerations around the d
 
 #### Development Environment
 
+The underlying reason these issues arise is that in Colab, you are relying on the environment of the instance you are working on — and you have no control over that environment. This creates a two-directional compatibility risk: Colab can update in a way that is not compatible with the version of BERTopic installed, or BERTopic can release an update that is not compatible with the current Colab environment. Either direction can silently break the ability to reload a previously saved model.
+
 - **Colab usage:** Colab is frequently used for building topic models. Periodic system updates may enforce Python version changes, causing disruptions.
 - **Model reload issues:** If a system update occurs between creating the model and applying it to the full dataset, it may prevent reloading the topic model due to dependency changes in BERTopic.
 - **Library updates:** BERTopic is actively developed and releases can introduce compatibility issues.
