@@ -71,55 +71,56 @@ Two core component types have been identified: generic components, which are int
 
 ### Component Flexibility
 
-The differentiation in project types requires flexibility within the topic modelling components. Whether generic or project-specific, components need to be adaptable to the unique demands of each project's scope, data nature, and analytical objectives.
+This differentiation in project types requires flexibility within the topic modelling components. Whether generic or project-specific, components need to be adaptable, designed to align with the unique demands of each project's scope, data nature, and analytical objectives. The following sections outline the various changes that each component can go through.
 
 ---
 
 ## Generic Components and Their Internal Modifications
 
 **Data preprocessing**
-- *Standard processes:* typically includes removing links, emojis, etc. Specific adjustments may be necessary for multilingual datasets, where preprocessing is applied based on language differences.
-- *Metadata integration:* incorporating metadata such as country or platform annotations requires a flexible schema that can accommodate different data types while maintaining a consistent output format.
+- *Standard processes:* typically includes removing links, emojis, etc. Specific adjustments may be necessary for datasets in multiple languages, where unique preprocessing is applied based on language differences.
+- *Metadata integration:* incorporating metadata like country or platform annotations is crucial. A flexible schema that can accommodate any data type, ensuring a consistent output format, is essential. This schema might be project-specific or universally applicable, with adjustable fields.
 
 **Embedding extraction**
 
-Changes here relate to data source and language:
-- *Multilingual data:* requires a decision between a language-specific model per language, a generic multilingual model, or translating all data into a unified language and selecting a model for that language.
-- *Data source:* social media data tends to have restricted character length; articles are long-form and require models capable of handling longer context. Some models also require specific preprocessing — for example, `nomic-ai/nomic-embed-text-v1` requires a prefix added to each sentence before processing.
+Changes in this component relate to data source and language:
+- *Multilingual data:* requires a decision between a model that can handle each language specifically, a generic multilingual model, or translating the data into a unified language and finding a model to represent it in that language.
+- *Data source:* data from social media platforms tends to have more restricted character length. Articles are generally long-context data and require a different model capable of handling that. These models may also require specific preprocessing — for example, `nomic-ai/nomic-embed-text-v1` requires adding a suffix to each sentence before processing.
 
 **Parameter tuning**
 
-While tuning of most parameters remains consistent across projects, the choice of clustering algorithm may vary depending on specific project needs. See [`docs/considerations/`](../considerations/) for details.
+While the tuning of most parameters remains consistent, the choice of clustering algorithm may vary depending on the project's specific needs. See [`docs/considerations/`](../considerations/) for details.
 
 **Topic model creation**
 
-The process generally remains the same. However, thematic allocation may require generating sample data for annotation. In projects focused solely on topic segmentation without thematic analysis, this step may not apply. Regardless of project type, annotating data with topic information is a standard requirement.
+The process generally remains the same; however, thematic allocation may necessitate generating sample data. In projects focused solely on topic segmentation without thematic analysis, this step may not apply. Regardless of the project type, annotating data with topic information is a standard requirement.
 
 **Storage**
 
-Essential elements — embeddings, the topic model, and annotated data — are stored universally. Sample storage is project-dependent, primarily required when thematic allocation is involved.
+The nature of the project dictates storage needs. Essential elements — embeddings, the topic model, and annotated data — are stored universally. Sample storage is project-dependent, primarily required when thematic allocation is involved.
 
 ---
 
 ## Project-Specific Components and Their Internal Modifications
 
 **Thematic mapping**
-- *Basic sampling:* for some projects, selecting a small number of messages per topic (e.g. 10) for preliminary analysis may be sufficient, though this generally requires several rounds of refinement.
-- *In-depth analysis:* more detailed projects may require examining a larger proportion of each topic's content (e.g. 10%) to gain a deeper understanding. This demands more time and analytical effort but is more flexible — making use of metrics such as entropy and silhouette scores to identify when analysis has reached a point of diminishing returns. See [`docs/annotation/`](../annotation/).
+- *Basic sampling:* for some projects, a straightforward strategy such as selecting a small number of messages per topic (e.g. 10) for preliminary analysis might be employed. This approach generally necessitates several rounds of refinement and can require significant time to achieve a satisfactory thematic structure.
+- *In-depth analysis:* more detailed projects may require examining a larger portion of each topic's content (e.g. 10%) to gain a deeper understanding. This method demands considerable time and analytical effort, however it is more flexible — making use of specific metrics such as entropy and silhouette scores to determine when the analysis has reached a point of diminishing returns. See [`docs/annotation/`](../annotation/).
 
 **Evaluation**
 
-The evaluation shifts from assessing basic topic relevance in simpler projects to conducting detailed evaluations of thematic and sub-thematic layers in more complex analyses. The aspects being evaluated vary, but the underlying evaluation criteria remain constant. See [`docs/evaluation/`](../evaluation/).
+The evaluation shifts from assessing basic relevance of topics in simpler projects to conducting detailed evaluations of thematic and sub-thematic layers in more complex analyses. This means that although the criteria for evaluation stay the same, the aspects of the data being evaluated vary. Despite the varying levels of thematic detail, the underlying evaluation criteria remain constant. See [`docs/evaluation/`](../evaluation/).
 
 **Guided topic modelling**
 
-Only applicable when the project is provided with a predefined set of narratives or themes to identify. The main variation is whether SetFit contrastive learning is used or an alternative guided approach. See [`docs/guided/`](../guided/).
+This step is only applicable when the project is provided with a predefined set of interesting narratives to identify. The main variation in this component is whether a SetFit workflow is used to do contrastive learning or a different guided approach is taken. See [`docs/guided/`](../guided/).
 
 **Analysis and reporting**
 
-A constant across all workflow types, varying significantly in scope and depth:
-- *Methodology focus:* in some projects, analysis and reporting focus solely on the methodology, with topic modelling as one phase among many rather than the ultimate objective.
-- *Thematic analysis:* other workflows require a more in-depth approach, incorporating both methodology and thematic analysis — a blend of qualitative and quantitative examination.
+This essential phase is a constant across all types of workflows, varying significantly in scope and depth depending on the project. It is worth noting that analysis and reporting may not affect the design of the architecture, as it is often handled separately.
+
+- *Methodology focus:* in some projects, analysis and reporting might solely focus on the methodology, with topic modelling serving as one phase among many rather than the ultimate objective. This approach typically outlines the procedural aspects of topic modelling within the larger project context.
+- *Thematic analysis:* other workflows demand a more in-depth approach, incorporating both methodology and thematic analysis. This involves a blend of qualitative and quantitative analysis, offering a richer and more detailed examination of the topics and themes identified.
 
 ---
 
