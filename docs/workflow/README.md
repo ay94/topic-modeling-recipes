@@ -258,6 +258,7 @@ Ready-to-run Colab notebooks implementing the full workflow are in the [`multili
 | [`notebooks/workflow/01_topic_model.ipynb`](https://github.com/ay94/multilingual-topic-modeling/blob/main/notebooks/workflow/01_topic_model.ipynb) | Embedding, parameter tuning, BERTopic, annotation sample |
 | [`notebooks/workflow/02_topic_theme_map.ipynb`](https://github.com/ay94/multilingual-topic-modeling/blob/main/notebooks/workflow/02_topic_theme_map.ipynb) | Applying the topic theme map, evaluation sample |
 | [`notebooks/workflow/03_evaluation.ipynb`](https://github.com/ay94/multilingual-topic-modeling/blob/main/notebooks/workflow/03_evaluation.ipynb) | Precision / recall / F1 at theme and sub-theme level |
+| [`notebooks/workflow/04_translate_and_cluster.ipynb`](https://github.com/ay94/multilingual-topic-modeling/blob/main/notebooks/workflow/04_translate_and_cluster.ipynb) | Translate non-English text, cluster translations, map topics back to source language, entropy homogeneity assessment |
 
 Each notebook is self-contained: it installs the library, mounts Google Drive, and documents its own inputs and outputs. See the repo README for setup instructions.
 
