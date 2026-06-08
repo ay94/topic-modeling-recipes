@@ -225,18 +225,24 @@ See [`docs/evaluation/`](../evaluation/) for a description of the current evalua
 
 ### Analysis
 
-The primary factor in determining the analysis approach is the nature of the project and the specific agreement with the client.
+The key consideration at this stage is ensuring that the analysis is aligned with the methodological outcome. The primary factor in determining the analysis approach is the nature of the project and the specific agreement with the client.
 
-**Qualitative projects:**
-- Avoid indicating quantities unless thoroughly tested and validated
-- Any quantification should be approached with caution and be inferable from the adopted approach
-- For topics requiring quantification, sampling can be used to divide narratives within a topic, but this requires careful interpretation, statistical validation of representativeness, and avoidance of broad generalisations across the full dataset
-- Zero-shot analysis can be employed for qualitative exploration by formulating questions derived from the topic theme map. This approach shows high precision in retrieving relevant information when message content aligns closely with question vocabulary, but has limitations in semantic understanding
+**Qualitative projects**
 
-**Quantitative projects:**
-- Quantification is limited to aspects that have undergone evaluation — generalisations beyond evaluated elements are not methodologically justified
-- When data is evaluated at the theme level, quantification should be limited to that level; good theme-level performance does not imply accurate sub-theme mapping
-- Insights must be directly related to the level and type of evaluation conducted
+1. For projects focused on exploring the data without quantifiable measures, the analysis should avoid indicating quantities unless they are thoroughly tested and validated.
+2. Any quantification should be approached with caution, ensuring it can be inferred from the adopted approach.
+3. For topics that require quantification, sampling can be used to divide narratives and quantify them within a topic. However, this requires:
+   - Careful interpretation and reporting of results
+   - Ensuring representativeness of the sample through statistical testing to validate generalisations within the topic
+   - Avoiding broad generalisations across the entire dataset
+4. Additional methods — such as those used in the Gates project — can attempt to quantify unevaluated aspects, but this requires careful framing to avoid overgeneralisation.
+5. Zero-shot analysis can be employed for qualitative exploration by formulating questions derived from the topic theme map and examining the data accordingly. This approach shows high precision in retrieving relevant information, but is most effective when the message content aligns closely with the vocabulary used in the questions — indicating a limitation in its semantic understanding.
+
+**Quantitative projects**
+
+1. Quantification is limited to aspects that have undergone evaluation. Generalisations beyond the evaluated elements are not methodologically correct.
+2. When data is evaluated at the theme level, quantification should be limited to that level. It is methodologically incorrect to infer that good performance at the theme level automatically translates to accurate sub-theme mapping.
+3. The insights drawn must be directly related to the level and type of evaluation conducted.
 
 ---
 
