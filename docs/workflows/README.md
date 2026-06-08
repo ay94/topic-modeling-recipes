@@ -59,15 +59,15 @@ flowchart LR
 
 ---
 
-## Adapting Components to Project Goals
+## Adapting Topic Modelling Components and Architectures to Project Goals
 
-Both generic and project-specific components may undergo internal modifications driven by the project's analytical goals and data characteristics.
+Two core component types have been identified: generic components, which are integral to any topic modelling exercise, and project-specific components, which are tailored to meet the objectives of a particular project. Within this framework, both types of components may undergo modifications in their internal processes, influenced by the project's analytical goals and the data characteristics. This section briefly discusses these modifications and the diverse applications of topic modelling across various project proposals.
 
 ### Project Proposal Variations
 
-**General exploration workflow** — provides clients with data segmented by topic modelling, without further analysis. Often a pilot or minimally budgeted initiative. Variations may aim at enhancing client capabilities such as improving search functionality via keyword identification, or generating training examples for classifiers. These proposals leverage topic modelling for its clustering and data segmentation capabilities.
+**General exploration workflow** — this approach offers clients a means to independently explore their data. The data, segmented by the topic model, is provided without further analysis — often serving as a pilot or a minimally budgeted initiative. Variations of this workflow may aim more specifically at enhancing client capabilities, such as improving search functionality through keyword identification or generating training examples for classifiers. Although less common and typically embedded within larger projects, these proposals leverage topic modelling for its clustering and data segmentation capabilities, often utilising BERTopic due to its effectiveness over the individual use of UMAP and HDBSCAN.
 
-**Qualitative and quantitative projects** — focus on accurately analysing specific datasets or events over defined periods, providing precise quantifications that aid and direct qualitative analysis. Projects may be guided by predetermined themes or hypotheses. Topic modelling serves either as a direct classifier or as a tool for dividing data into a thematic breakdown that can then be refined via classifiers.
+**Qualitative and quantitative projects** — these projects focus on analysing specific datasets or events accurately over certain periods, aiming to provide precise quantifications that aid and direct qualitative analysis. Projects may be guided by predetermined themes or hypotheses, driving a more exploratory yet rigorous approach. The application of topic modelling in these contexts varies, serving either as a direct classifier or assisting in dividing the data into a thematic breakdown which can then be refined via classifiers.
 
 ### Component Flexibility
 
