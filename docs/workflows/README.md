@@ -175,8 +175,27 @@ flowchart TD
 
 ### Qualitative vs Quantitative Workflows
 
-These workflows strike a balance between qualitative insights and quantitative analysis. The emphasis on qualitative aspects might necessitate the inclusion of thematic mapping, with sampling strategies reflecting the depth of qualitative analysis desired. Conversely, projects leaning towards quantitative analysis, using topic modelling as a classifier, will prioritise the evaluation component, dedicating substantial effort to validate the model's effectiveness. The blue node indicates a component that is auxiliary, optional, and may be replaced.
+These workflows strike a balance between qualitative insights and quantitative analysis. The emphasis on qualitative aspects might necessitate the inclusion of thematic mapping, with sampling strategies reflecting the depth of qualitative analysis desired. Conversely, projects leaning towards quantitative analysis, using topic modelling as a classifier, will prioritise the evaluation component, dedicating substantial effort to validate the model's effectiveness. The blue node indicates a component that is auxiliary, optional, and may be replaced. In some cases, we use classifiers like keywords to refine the content of heterogeneous topics; however, the choice of classifiers varies depending on the complexity of the topic. We could also use zero-shot or layered topic modelling to dissect the data further until we reach a homogeneous level. See [`docs/layered/`](../layered/).
 
-In some cases, classifiers such as keywords are used to refine the content of heterogeneous topics; however, the choice of classifier varies depending on the complexity of the topic. Zero-shot or layered topic modelling can also be used to dissect the data further until a homogeneous level is reached. See [`docs/layered/`](../layered/).
+```mermaid
+flowchart TD
+    A[Data Preprocessing] --> H[Guided Topic Modelling]:::optional
+    A --> B[Embedding Extraction]
+    H --> B
+    B --> C[Parameter Tuning]
+    C --> D[Topic Modeling]
+    D --> E[Storage]
+    E --> F[Thematic Mapping]
+    CL[Classifiers]:::auxiliary --> F
+    F --> G[Evaluation]
 
-<!-- Figure 4: Qual vs Quant Architecture -->
+    classDef process fill:#ffffff,stroke:#1B1A18,stroke-width:1.5px,color:#1B1A18
+    classDef data fill:#F4EFE5,stroke:#1B1A18,stroke-width:1.5px,color:#1B1A18
+    classDef optional fill:#d9d9d9,stroke:#1B1A18,stroke-width:1.5px,color:#1B1A18
+    classDef auxiliary fill:#7EB6D4,stroke:#1B1A18,stroke-width:1.5px,color:#1B1A18
+
+    class A,B,C,D,F,G process
+    class E data
+    class H optional
+    class CL auxiliary
+```
