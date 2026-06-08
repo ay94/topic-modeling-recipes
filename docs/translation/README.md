@@ -107,9 +107,64 @@ This allows topics with different numbers of descriptions to be compared on the 
 
 ### Translation model results (Stage 1)
 
-MBART achieved METEOR=0.678 and BERTScore F1=0.964 on the OPUS test set. The gap between the two metrics reflects the generative nature of the model: BERTScore captures that the meaning is preserved, while METEOR penalises the paraphrasing and structural variation that a generative model naturally produces.
+As discussed, the initial stage involves selecting a suitable translation model. Most models tested produced unsatisfactory results, often generating noisy, meaningless text filled with special characters. The chosen model, `facebook/mbart-large-50-many-to-many-mmt`, is a multilingual BART comprising an encoder and decoder that takes input and generates output. This setup was deemed more suitable as our aim is not to attain perfect matches, but to capture the closest possible meaning. Due to its generative nature, the model sometimes creates text that can be viewed as a paraphrase or contains more or less information than the original text.
 
-The rationale for using both: METEOR serves as the stringent criterion showing how far the translation diverges from the exact reference text. BERTScore aligns more closely with the topic modelling objective — semantic content matters more than surface form.
+The translation output was evaluated by computing the METEOR score between the translation and the gold standard English, with the model achieving an average score of 0.678. Additionally, BERTScore was computed, where the model attained a 0.964 F1 score. The distinction between the two lies in the evaluation focus: METEOR assesses partial and exact matches allowing flexibility in word choice, while BERTScore measures semantic similarity between the translation and gold standard text. BERTScore employs pre-trained embeddings to map both candidate (translations) and reference (gold standard) texts into high-dimensional vectors. Precision is computed by examining each token in the candidate sentence and averaging the highest cosine similarity scores achieved against tokens in the reference (indicating the precision of predictions). Conversely, recall is computed by examining each token in the reference sentence and averaging the highest cosine similarity scores achieved against tokens in the candidate (indicating what was missed).
+
+The rationale behind employing both evaluation metrics — METEOR and BERTScore — is twofold. METEOR, a standard machine translation metric with stringent criteria, serves to illustrate the divergence between the generated translation and the actual text. Conversely, BERTScore, with a focus on semantic meaning represented by the pretrained model, aligns more closely with the topic modelling approach and the overarching objective of the study.
+
+**Descriptive statistics (OPUS test set, 5,000 sentence pairs):**
+
+| Stat | BERTScore | METEOR |
+|---|---|---|
+| Count | 5,000 | 5,000 |
+| Mean | 0.963837 | 0.678280 |
+| Std | 0.034282 | 0.302185 |
+| Min | 0.792368 | 0.000000 |
+| 25% | 0.941308 | 0.482696 |
+| Median | 0.968213 | 0.736111 |
+| 75% | 1.000000 | 0.981481 |
+| Max | 1.000001 | 0.999898 |
+
+The smaller spread in BERTScore (std=0.034) indicates the majority of points are clustered near the mean. The broader spread in METEOR (std=0.302) and its lower minimum values reflect its sensitivity to paraphrasing and structural variation.
+
+**Error analysis — 30-sentence sample:**
+
+An analysis was conducted on a random selection of 30 sentences under varying conditions: sentences with METEOR < 0.5, METEOR > 0.5, and BERTScore < 0.8. Key observations:
+
+- **METEOR sensitivity:** METEOR is significantly impacted when the translation model substitutes named entities with pronouns or alters verbs, even when the meaning is retained. Paraphrasing that changes sentence structure lowers METEOR substantially — as seen in example 3054 ("He's luckier than he's smart" → "He's more lucky than he is smart", METEOR=0.288, BERTScore=0.929).
+
+- **BERTScore limitation:** In instances where translations are entirely incorrect, BERTScore can remain high while METEOR is very low. Examples 1827 ("Wait, Jamal" → "Hold on, Beauty", METEOR=0.000, BERTScore=0.912) and 1166 ("Sami's release was decided" → "The release of Sami was devastating", METEOR=0.238, BERTScore=0.878) illustrate this. A potential workaround is averaging both scores and establishing a threshold to define an acceptable combined translation score.
+
+| ID | Gold standard | Translation | METEOR | BERTScore |
+|---|---|---|---|---|
+| 1 | Fadil was sentenced to death for killing a little girl | He was executed for murdering a little girl. | 0.455 | 0.920 |
+| 445 | Jack's not there. | Jack doesn't exist. | 0.000 | 0.886 |
+| 467 | Uh, uh, uh, uh, uh... | What's he going to do with me now? | 0.000 | 0.792 |
+| 662 | Don't work. | It doesn't work. Play! | 0.227 | 0.908 |
+| 781 | It's on me. | Calculate for me. | 0.167 | 0.894 |
+| 1166 | Sami's release was decided. | The release of Sami was devastating. | 0.238 | 0.878 |
+| 1392 | Call me when you get back. | Call me when you come back. | 0.998 | 0.962 |
+| 1548 | Sami stayed in a coma for weeks. | Sami remained in a coma for weeks. | 0.999 | 0.984 |
+| 1827 | Wait, Jamal. | Hold on, Beauty. | 0.000 | 0.912 |
+| 2357 | Sami didn't take any pills. | Sami didn't eat any CDs. | 0.511 | 0.961 |
+| 2865 | Sami left his glasses in the hotel room. | Sami left his janitor in the hotel room. | 0.865 | 0.973 |
+| 3023 | Sami looked like he was possessed. | He looked poisonous and smelled putrid. | 0.167 | 0.891 |
+| 3054 | He's luckier than he's smart. | He's more lucky than he is smart. | 0.288 | 0.930 |
+| 3093 | I appreciate being in there before 2:30. | I was there about an hour and a half ago. | 0.137 | 0.910 |
+| 3124 | This phrase will be translated. | You'll remember that phrase. | 0.000 | 0.870 |
+| 3636 | Listen and watch and stay calm. | I listened and watched and remained calm. | 0.981 | 0.894 |
+| 3886 | Sami was smoking. | Sami was a smoker. | 0.605 | 0.953 |
+| 4327 | Sami was waiting for Layla's call. | Sami was waiting to call Lily. | 0.491 | 0.943 |
+| 4440 | Sami disguises himself with a different voice. | Sami is voiced in a different way. | 0.365 | 0.931 |
+| 4523 | Jane went out shopping. | Gene went shopping. | 0.256 | 0.964 |
+| 4560 | Layla's in. | I walked in to Lily. | 0.000 | 0.849 |
+| 4633 | I have a girlfriend in England. | I have a friend in England. | 0.807 | 0.999 |
+| 4640 | Is there something I don't understand? | Is there something I didn't understand? | 0.807 | 0.978 |
+| 4758 | Sami got drunk a little bit. | Somebody's going to kill Samy someday. | 0.083 | 0.850 |
+| 4796 | Layla likes to gossip. | Lily loves to say things. | 0.122 | 0.928 |
+| 4864 | He winked at me. | Sorrowful to me. | 0.128 | 0.906 |
+| 4868 | Life is still ahead of you. | Life is still ahead of you. | 0.998 | 1.000 |
 
 ### Topic model results (Stage 2)
 
