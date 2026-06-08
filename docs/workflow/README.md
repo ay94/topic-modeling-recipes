@@ -151,6 +151,55 @@ Full evaluation methodology: [`docs/evaluation/`](../evaluation/).
 
 ---
 
+## Full Implementation Workflow
+
+```mermaid
+flowchart TD
+    subgraph NB["Topic modelling notebook"]
+        A[Pre-processing] --> B[Pre-processed data]
+        B --> C[Deduplicate]
+        C --> D[Unique sentences]
+        D -->|sentences| E[Embedding model\ne.g. sentence-transformers]
+        E -->|embeddings| F[Embeddings]
+        G[/Initial clustering\nparameters/] --> H
+        F --> H[Parameter tuning]
+        H --> I[Perform clustering]
+        I --> J[Inspect clusters]
+        J --> K{Satisfactory?}
+        K -->|No| L[/Update clustering\nparameters/]
+        L --> H
+        K -->|Yes| M[Save parameters\nUMAP x,y · topic info]
+        M --> N[Create and apply\ntopic model]
+        N --> O[Annotated data]
+        O --> P["Align data\n(optionally propagate\ntopics to duplicates)"]
+        P --> Q[Final annotated data]
+        Q --> R[Theme mapping]
+    end
+
+    HF[(HuggingFace hub)] --> E
+    E -->|embeddings| EJSON[embeddings.json]
+    EJSON --> STORE
+    M --> PJSON[Parameters json\nUMAP x,y coordinates]
+    N --> TCSV[Topic info CSV\ntopic ID · keywords\nrepresentative docs]
+    N --> BFILE[BERTopic model file]
+    PJSON --> STORE[(Storage)]
+    TCSV --> STORE
+    BFILE --> STORE
+
+    classDef process fill:#ffffff,stroke:#1B1A18,stroke-width:1.5px,color:#1B1A18
+    classDef decision fill:#C8A876,stroke:#1B1A18,stroke-width:1.5px,color:#1B1A18,font-weight:bold
+    classDef terminal fill:#1B1A18,stroke:#1B1A18,color:#ffffff,stroke-width:1.5px
+    classDef data fill:#F4EFE5,stroke:#1B1A18,stroke-width:1.5px,color:#1B1A18
+    classDef external fill:#1B1A18,stroke:#1B1A18,color:#ffffff,stroke-width:1.5px
+
+    class K decision
+    class B,D,F,O,Q,G,L,EJSON,PJSON,TCSV,BFILE data
+    class A,C,E,H,I,J,M,N,P,R process
+    class HF,STORE external
+```
+
+---
+
 ## Outcomes
 
 The outcomes are highly dependent on the specific objectives and nature of each project. This flexibility allows the methodology to be adapted to a wide range of analytical needs.
