@@ -52,31 +52,44 @@ The objective is to investigate the homogeneity and cohesion of topics across th
 
 ### Stage 3 — Annotation and homogeneity assessment
 
-**Topic selection:** For each setup, the top 10 topics (largest, tend to be more heterogeneous) and bottom 5 topics (smallest, tend to be more homogeneous) are selected for manual annotation. A 10% sample of messages is drawn from each selected topic and saved for annotation.
+The objective in this stage is to assign descriptive labels to topics that explain their content and to assess the homogeneity of these topics.
+
+**Topic selection:** The first step is to select the topics for investigation. Based on past experiences, the top ten and bottom five topics were chosen. Generally, the top ten topics are the largest in size and tend to be the most heterogeneous, while the bottom five topics are smaller and tend to be more homogeneous. For each of these topics, a 10% sample of the messages is extracted and saved to a Google Sheet for manual annotation.
 
 **Annotation process:**
-1. Read the messages in the sample
-2. For each message, formulate a description of the discussed content (multiple messages may share one description)
-3. Define descriptions consistently across annotators
+
+The annotation process encompasses the following activities:
+1. Reading the messages in the sample
+2. For each message, formulate a description of the discussed content (note: multiple messages can share the same description)
+3. Define these descriptions to ensure consistency
 4. Assign the appropriate description to each message
 
-Each topic ends with a single description or a list of descriptions, plus a qualitative homogeneity score.
+Once the sample annotation is completed, we will end up with either a single description or a list of descriptions representing the discussions within the topic. Additionally, a qualitative score called homogeneity is provided to offer a qualitative assessment of the discussion's homogeneity. Lastly, we also verify whether the assigned descriptions align with the keyword representations of the topics identified by BERTopic.
 
-**Homogeneity measure — entropy:**
+**Assessing annotation outcomes:**
 
-Homogeneity is quantified using entropy over the description distribution within each topic:
+The final stage of the annotation process entails assessing the annotation outcomes, conducted in two forms:
+1. Evaluating the uncertainty associated with assigning descriptions
+2. Calculating the BERTScore by representing sentences using a multilingual model (`xlm-roberta-base`)
+
+**Entropy — measuring annotation uncertainty:**
+
+A well-known measure of annotation uncertainty is entropy, computed through the following steps:
+
+1. For a specified topic, determine the probability distribution of the descriptions
+2. Compute the entropy using the formula:
 
 $$H(X) = -\sum_{x} p(x) \log_2 p(x)$$
 
-where $p(x)$ is the proportion of messages assigned each description within the topic.
+where X is a discrete random variable representing the annotation, with possible outcomes x, and p(x) denotes the probability of each description within the topic.
 
-Maximum entropy (all descriptions equally probable) is:
+Entropy has two important boundary values: the minimum entropy is always zero (one description covers the entire topic), and the maximum entropy is:
 
 $$H_{\max} = \log_2(n)$$
 
-where $n$ is the number of distinct descriptions in the topic.
+where n represents the number of possible outcomes or descriptions for a given topic.
 
-A topic is deemed **homogeneous** if its entropy falls below 50% of $H_{\max}$. Above that threshold, the topic is **heterogeneous**.
+If a topic's entropy value falls below 50% of the range, it is deemed **homogeneous**. Conversely, if the entropy value is above this threshold, the topic is considered **heterogeneous**.
 
 Entropy can also be expressed as a normalised value between 0 and 1:
 
