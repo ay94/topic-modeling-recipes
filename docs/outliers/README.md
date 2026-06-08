@@ -27,7 +27,7 @@ This spatial property is important: the -1 cluster is not a separate or peripher
 
 ### How HDBSCAN Works
 
-HDBSCAN is a density-based clustering algorithm designed to identify clusters of varying shapes and sizes within a dataset. Unlike k-means, which assumes spherical clusters, HDBSCAN adapts to the local density structure of the data, discovering clusters of arbitrary shape. Rather than fitting all points into predefined geometric forms, it identifies where data is naturally dense and treats each dense region as a cluster.
+HDBSCAN is a density-based clustering algorithm designed to identify clusters of varying shapes and sizes within a dataset. Unlike traditional clustering algorithms that assume clusters to be spherical, this assumption breaks down when data forms clusters in more complex or irregular shapes — it is like trying to fit everything into a circle, even when the real groups are more diverse. HDBSCAN leverages minimum spanning trees and density reachability to uncover clusters in a more flexible manner. A minimum spanning tree can be thought of as the best way to connect all the points with the shortest possible lines, forming a tree structure that reveals how points naturally connect. Density reachability is about understanding how densely packed certain areas of the data are and finding clusters based on that density, rather than insisting on specific geometric shapes.
 
 The algorithm proceeds in four steps:
 
