@@ -112,18 +112,33 @@ There are two aspects to topic modelling hyperparameters: tuning (trade-offs bet
 
 **Tuning**
 
-The main challenge is reducing the number of topics while maintaining analytical granularity and keeping outlier (-1) messages low. The key HDBSCAN parameters are:
+One of the main challenges in topic modelling is reducing the number of topics while ensuring the analysis is granular enough and the volume of messages classified as -1 (outliers) remains manageable. The main hyperparameters to tweak are those associated with HDBSCAN:
 
-- `min_cluster_size` — controls the number of topics. Increasing it reduces topic count but risks reducing topic homogeneity and specificity.
-- `min_samples` — controls how many messages are classified as -1. Reducing it makes the model more lenient (fewer outliers); increasing it makes it stricter.
+1. **`min_cluster_size`** — adjusting this parameter plays a crucial role in controlling the number of topics generated. Increasing it can reduce the number of topics, but at the cost of potentially impacting the homogeneity and specificity of the resulting topics.
 
-Two additional approaches were explored specifically to address -1 messages: soft labelling and k-means reclustering. See [`docs/outliers/`](../outliers/) for details.
+2. **`min_samples`** — this parameter influences the number of messages classified as -1. By adjusting it, the model becomes more or less lenient in determining whether a message is an outlier. Reducing `min_samples` makes the model more forgiving (fewer -1 messages); increasing it does the opposite.
+
+Two additional approaches were explored specifically to address the -1 problem: soft labelling and k-means reclustering. See [`docs/outliers/`](../outliers/) for full documentation of both approaches.
 
 **Reproducibility and Analysis**
 
-- **UMAP random state:** UMAP is stochastic. Setting `random_state` is essential for reproducibility, particularly if the model needs to be reapplied after a system update.
-- **BERTopic model manipulation:** Functionalities such as reducing the number of topics or specifying topic count involve manipulating the c-TF-IDF matrix. This manipulation can be stochastic, making exact reproduction of outputs difficult.
-- **Visualisation consistency:** BERTopic visualisations are based on the c-TF-IDF matrix, not the contextual embeddings. Visual insights from the matrix may not align with embedding-space insights and can lead to misleading interpretations.
+Reproducibility in topic modelling involves not only the environment but also a careful consideration of hyperparameters. Understanding the inner workings of BERTopic is crucial for ensuring reproducibility and meaningful analysis.
+
+BERTopic relies on two essential underlying models: UMAP and HDBSCAN.
+
+*UMAP random state*
+
+UMAP is a stochastic model. Setting `random_state` is essential for ensuring reproducibility when generating the topic model. This becomes particularly relevant when reapplying the topic model is necessary — for example, due to a system update in Colab.
+
+*BERTopic model manipulation*
+
+While BERTopic is trained based on the contextualised representation of the data, any actions related to model manipulation or visualisation are performed on the c-TF-IDF representation — a matrix representing word overlap across topics, not semantic meaning.
+
+1. **Manipulation impact on reproducibility** — functionalities such as reducing the number of topics or specifying the number of topics involve manipulating the c-TF-IDF matrix. This manipulation can be stochastic, making it challenging to reproduce the same topic model outputs.
+
+2. **Visualisation consistency** — visualisations produced by BERTopic are based on the same c-TF-IDF matrix. Visual insights derived from the matrix may not align with insights from the contextual embeddings, potentially leading to misleading interpretations.
+
+Understanding these dynamics is crucial for maintaining reproducibility and interpreting visualisations accurately.
 
 ---
 
