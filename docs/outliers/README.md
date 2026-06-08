@@ -47,20 +47,23 @@ HDBSCAN emphasises the stability of clusters by identifying areas in the condens
 
 ### The Membership Vector
 
-Every message in HDBSCAN receives a **membership vector** — a set of scores indicating its strength of association with each identified cluster. These scores are derived from the stability of cluster membership across the hierarchy, not from a simple distance-to-centroid calculation.
+The membership vector in HDBSCAN is a component that provides information about the association of each data point with the identified clusters. For each point, the membership vector is essentially a set of scores indicating the probability or strength of affiliation with each cluster. This vector reflects the density-based nature of HDBSCAN. It is worth noting that the membership scores represent the strength of association between a data point and different clusters — these scores are not probabilities in the traditional sense; they indicate how well a point fits into each cluster.
 
-**Nature of the vector:**
-- Scores reflect how consistently a point is grouped with the same cluster as the hierarchy is traversed. Higher stability → higher score.
-- A point's raw scores do not necessarily sum to one. When normalised, the membership vector can be interpreted as a probability distribution where scores sum to 1 across all clusters for a given point.
-- Unlike hard clustering, a point may have significant scores across multiple clusters, capturing the ambiguity or overlap common in real-world datasets.
+**1. Nature of the vector**
+- The probability assignment in HDBSCAN is derived from the stability of a point's cluster membership across different levels of the cluster hierarchy.
+- The probability assigned to a data point reflects the stability of its cluster membership. Points that are consistently part of the same cluster across different levels of the hierarchy are assigned higher probabilities.
+- Stability is assessed by considering how often a point is grouped together with others in the same cluster as we move up and down the hierarchy. If a point consistently belongs to the same cluster, it is deemed more stable, and its probability of belonging to that cluster is higher.
+- The stability of a cluster is also taken into account. If a cluster persists across different levels of the hierarchy, the points within that cluster are assigned higher probabilities.
+- The output is a set of probabilities for each data point indicating its likelihood of belonging to different clusters. However, these probabilities do not necessarily sum to one for each data point.
 
-**What stability means:**
-- The score assigned to a data point for a given cluster reflects how often it is grouped together with others in that cluster across different levels of the hierarchy.
-- The stability of the cluster itself is also factored in — if a cluster persists across hierarchy levels, the points within it receive higher scores.
-- Points deep inside a dense cluster receive high scores for that cluster; points at the boundary carry meaningful scores for multiple clusters.
+**2. Probability distribution**
+The membership vector, when normalised, can be interpreted as a probability distribution. Each element represents the likelihood of the corresponding point belonging to a specific cluster. The sum of probabilities across all clusters for a single point is equal to 1.
 
-**Soft clustering:**
-The membership vector is what enables soft clustering — a point exhibiting characteristics of multiple clusters simultaneously can be assigned to more than one, capturing fringe membership rather than forcing a binary decision.
+**3. Granular cluster assignments**
+Unlike traditional clustering methods that assign each point to a single cluster, the membership vector allows for more granular assignments. A point may have significant membership scores across multiple clusters, capturing the ambiguity or overlap often present in real-world datasets.
+
+**4. Soft clustering**
+This concept of soft clustering, facilitated by the membership vector, accommodates scenarios where a point may exhibit characteristics of multiple clusters simultaneously — which is the basis of the soft clustering mitigation approach described below.
 
 ---
 
