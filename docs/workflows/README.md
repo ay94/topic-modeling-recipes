@@ -32,7 +32,7 @@ These components are selectively applied depending on the project's requirements
 
 It is important to recognise that while the generic components form the backbone of any topic modelling project, the intricacies of their implementation may differ based on the unique demands of each project. Conversely, the project-specific components are selectively applied, dependent on the project's specific requirements and goals. Figure 1 presents a graphical representation of the architecture, with arrows indicating the order of execution.
 
-<!-- Figure 1: Topic Modelling Architecture -->
+![Figure 1: Topic Modelling Architecture](architecture.png)
 
 ---
 
