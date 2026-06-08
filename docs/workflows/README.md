@@ -126,37 +126,57 @@ This essential phase is a constant across all types of workflows, varying signif
 
 ## Architecture Flexibility
 
-The following sections describe how the component set changes depending on the type of project and its objectives. Each workflow type corresponds to a different architectural pattern.
+The adaptability of topic modelling architecture is crucial in meeting the diverse needs of various projects. This section delves into how the presence and internal dynamics of components — whether generic or project-specific — alter to align with the project type and its objectives.
 
 ### General Exploration Workflows
 
 #### Data Segmentation
 
-This workflow primarily uses generic components to provide clients with data segmented by topic modelling, without further analysis. It typically integrates into broader projects rather than existing as a standalone initiative.
+This approach primarily leverages generic components to provide clients with data segmented by topic modelling, without further analysis on our part. Typically, this workflow integrates into broader projects rather than existing as an independent project.
 
-*Components:* preprocessing → embedding → parameter tuning → topic model creation → storage
+```mermaid
+flowchart LR
+    A[Data Preprocessing] --> B[Embedding Extraction]
+    B --> C[Parameter Tuning]
+    C --> D[Topic Modeling]
+    D --> E[Storage]
 
-<!-- Figure 2: Data Segmentation Architecture -->
+    classDef process fill:#ffffff,stroke:#1B1A18,stroke-width:1.5px,color:#1B1A18
+    classDef data fill:#F4EFE5,stroke:#1B1A18,stroke-width:1.5px,color:#1B1A18
+
+    class A,B,C,D process
+    class E data
+```
 
 #### Active Learning
 
-Topic modelling here serves a dual purpose: segmenting data for better understanding and identifying training examples to enhance filtering algorithms. This could involve identifying relevant keywords within topics, or extracting sentences valuable for training classifiers. The architecture incorporates active learning strategies and may optionally integrate guided topic modelling and evaluation.
+Topic modelling here serves a dual purpose: dissecting data for better understanding and identifying training examples to enhance filtering algorithms. This could involve pinpointing relevant keywords within topics or extracting sentences valuable for training machine learning classifiers. The architecture incorporates active learning strategies, potentially integrating guided topic modelling and evaluation. The grey node indicates an optional component.
 
-*Components:* preprocessing → embedding → parameter tuning → topic model creation → storage → *(optional)* guided topic modelling → *(optional)* evaluation
+```mermaid
+flowchart TD
+    A[Data Preprocessing] --> H[Guided Topic Modelling]:::optional
+    A --> B[Embedding Extraction]
+    H --> B
+    B --> C[Parameter Tuning]
+    C --> D[Topic Modeling]
+    D --> E[Storage]
+    E --> G[Evaluation]:::optional
 
-<!-- Figure 3: Active Learning Architecture -->
+    classDef process fill:#ffffff,stroke:#1B1A18,stroke-width:1.5px,color:#1B1A18
+    classDef data fill:#F4EFE5,stroke:#1B1A18,stroke-width:1.5px,color:#1B1A18
+    classDef optional fill:#d9d9d9,stroke:#1B1A18,stroke-width:1.5px,color:#1B1A18
+
+    class A,B,C,D process
+    class E data
+    class H,G optional
+```
 
 ---
 
 ### Qualitative vs Quantitative Workflows
 
-These workflows balance qualitative insights with quantitative analysis.
+These workflows strike a balance between qualitative insights and quantitative analysis. The emphasis on qualitative aspects might necessitate the inclusion of thematic mapping, with sampling strategies reflecting the depth of qualitative analysis desired. Conversely, projects leaning towards quantitative analysis, using topic modelling as a classifier, will prioritise the evaluation component, dedicating substantial effort to validate the model's effectiveness. The blue node indicates a component that is auxiliary, optional, and may be replaced.
 
-- **Qualitative emphasis** — necessitates thematic mapping, with sampling strategies reflecting the depth of qualitative analysis desired. Layered topic modelling or zero-shot approaches may be used to dissect heterogeneous topics further. See [`docs/layered/`](../layered/).
-- **Quantitative emphasis** — prioritises the evaluation component, dedicating substantial effort to validating the model's effectiveness. Topic modelling serves as a classifier; evaluation is essential.
-
-In some cases, keyword-based classifiers are used to refine the content of heterogeneous topics. The choice of classifier varies depending on topic complexity — keywords, zero-shot, or layered topic modelling are all options depending on how homogeneous the resulting topics need to be.
-
-*Components:* preprocessing → embedding → parameter tuning → topic model creation → thematic mapping → *(optional)* guided topic modelling → evaluation → analysis and reporting
+In some cases, classifiers such as keywords are used to refine the content of heterogeneous topics; however, the choice of classifier varies depending on the complexity of the topic. Zero-shot or layered topic modelling can also be used to dissect the data further until a homogeneous level is reached. See [`docs/layered/`](../layered/).
 
 <!-- Figure 4: Qual vs Quant Architecture -->
