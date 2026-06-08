@@ -9,28 +9,30 @@ This document describes the analytical workflows that can be proposed through to
 
 ## Topic Modelling Architecture
 
-Before discussing the various workflows, it is essential to understand the architecture of topic modelling. It can be dissected into several core components — some universal across all projects, others tailored to specific requirements.
+Before discussing the various workflows, it is essential to understand the architecture of topic modelling. It can be dissected into several core components — some universal across all projects, others tailored to specific requirements. For a detailed walkthrough of the pipeline itself, see [`docs/workflow/`](../workflow/).
 
 ### Generic Components
 
 These components are present in every topic modelling project, though their internal implementation may vary:
 
-1. **Data preprocessing** — cleaning and preparing the data for analysis. The extent and methods may vary depending on the data and project needs, but this step is always present.
-2. **Embedding extraction** — transforming textual data into semantic representations using sentence transformers.
-3. **Parameter tuning** — adjusting UMAP and HDBSCAN parameters to optimise clustering performance.
-4. **Topic model creation** — feeding the prepared and embedded data into the topic modelling algorithm to identify underlying topics.
-5. **Storage** — the final model and its outputs are stored for further analysis. What is stored may differ between projects, but storage is always required.
+1. **Data preprocessing** — this initial stage involves cleaning and preparing the data for analysis. The extent and methods of preprocessing may vary depending on the data and project needs, however it will always be present.
+2. **Embedding extraction** — this component transforms textual data into a semantic representation using sentence transformers.
+3. **Parameter tuning** — this critical phase adjusts the model's parameters to optimise performance, typically involving UMAP and HDBSCAN.
+4. **Topic model creation** — the prepared and embedded data is fed into the topic modelling algorithm to identify the underlying topics.
+5. **Storage** — the final model and its outputs are stored for further analysis. The materials being stored may differ between projects, but there will always be things to store.
 
 ### Project-Specific Components
 
 These components are selectively applied depending on the project's requirements and goals:
 
-1. **Thematic mapping** — categorising discovered topics into a broader thematic breakdown. Requires domain expertise and is guided by the project's analytical objectives.
-2. **Evaluation** — assessing the model's effectiveness and accuracy. See [`docs/evaluation/`](../evaluation/).
-3. **Guided topic modelling** — for projects with specific analytical goals (such as uncovering particular narratives), embedding models can be fine-tuned using targeted techniques such as contrastive learning. This adjusts the model to focus more precisely on the project's areas of interest. See [`docs/guided/`](../guided/).
-4. **Analysis and reporting** — the final stage where results are analysed to derive insights. The depth and style vary significantly: from exploratory summaries to detailed thematic analyses.
+1. **Thematic mapping** — categorising the discovered topics into a broader thematic breakdown, a step that requires domain expertise and is often guided by the project's analytical objectives.
+2. **Evaluation** — the process of assessing the model's effectiveness and accuracy. See [`docs/evaluation/`](../evaluation/).
+3. **Embedding model fine-tuning (guided topic modelling)** — for projects with specific analytical goals — such as uncovering particular narratives or themes — embedding models like sentence transformers can be fine-tuned using targeted techniques such as contrastive learning. This fine-tuning process adjusts the model to focus more precisely on the project's areas of interest, enhancing its ability to identify and differentiate between topics. See [`docs/guided/`](../guided/).
+4. **Analysis and reporting** — the final stage where results are analysed to derive insights and findings are reported. The depth and style of analysis and reporting are significantly influenced by the project's goals, ranging from exploratory summaries to detailed thematic explorations.
 
-While the generic components form the backbone of any topic modelling project, the intricacies of their implementation differ based on each project's demands. Project-specific components are applied selectively based on requirements and goals.
+It is important to recognise that while the generic components form the backbone of any topic modelling project, the intricacies of their implementation may differ based on the unique demands of each project. Conversely, the project-specific components are selectively applied, dependent on the project's specific requirements and goals. Figure 1 presents a graphical representation of the architecture, with arrows indicating the order of execution.
+
+<!-- Figure 1: Topic Modelling Architecture -->
 
 ---
 
