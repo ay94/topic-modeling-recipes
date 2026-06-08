@@ -74,6 +74,29 @@ This is the approach the pipeline was designed around. See [`semantic-knn`](http
 
 **When to use:** The topic model has been trained and annotated. Cluster definitions are stable. The goal is coverage of the remaining corpus using what the model already learned.
 
+#### Choosing K and the similarity threshold
+
+Two parameters govern the quality of the retrieved sample:
+
+- **K** — the number of neighbours to retrieve. K affects precision: a small K returns only the most similar items, while a large K casts a wider net and may pull in less relevant content.
+- **Similarity threshold** — the distance cut-off beyond which neighbours are excluded. The threshold determines relevance: items within the threshold are considered relevant, items beyond it are not.
+
+#### Setting the similarity threshold using centroid distance
+
+A principled approach is to base the threshold on the distance distribution of points already known to belong to the cluster:
+
+1. For each cluster, compute the distance of every point from the cluster centroid.
+2. Inspect the distribution of these distances.
+3. Use the mean or a percentile (e.g. mean + one standard deviation) as the similarity threshold.
+
+This grounds the threshold in the actual spread of the cluster rather than an arbitrary value.
+
+**Important caveat:** this approach assumes the geometric centroid is a good proxy for the semantic centre of the cluster. This holds before the cluster has been characterised by an analyst. Once analysts have annotated and interpreted the cluster, the semantic centre — the point best representing what the cluster *means* — may differ from the geometric centre. After characterisation, the threshold should be based on the distance distribution from the already-annotated points, not the raw geometric centroid.
+
+#### Sampling order
+
+Sample before deduplication, not after. Deduplication removes repeated messages — if applied before sampling, the sample will not reflect the actual distribution of content in the data. Repeated messages (e.g. coordinated posting, viral content) are analytically significant; their frequency in the sample should mirror their frequency in the data. Apply deduplication after the sample has been drawn, if at all.
+
 ---
 
 ### Approach 2 — Keyword-Based Classification
