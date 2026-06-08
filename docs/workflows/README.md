@@ -150,7 +150,7 @@ flowchart LR
 
 #### Active Learning
 
-Topic modelling here serves a dual purpose: dissecting data for better understanding and identifying training examples to enhance filtering algorithms. This could involve pinpointing relevant keywords within topics or extracting sentences valuable for training machine learning classifiers. The architecture incorporates active learning strategies, potentially integrating guided topic modelling and evaluation. The grey node indicates an optional component.
+Topic modelling here serves a dual purpose: dissecting data for better understanding and identifying training examples to enhance filtering algorithms. This could involve pinpointing relevant keywords within topics or extracting sentences valuable for training machine learning classifiers. The architecture incorporates active learning strategies, potentially integrating guided topic modelling and evaluation. The gold node indicates an optional component.
 
 ```mermaid
 flowchart TD
@@ -164,7 +164,7 @@ flowchart TD
 
     classDef process fill:#ffffff,stroke:#1B1A18,stroke-width:1.5px,color:#1B1A18
     classDef data fill:#F4EFE5,stroke:#1B1A18,stroke-width:1.5px,color:#1B1A18
-    classDef optional fill:#d9d9d9,stroke:#1B1A18,stroke-width:1.5px,color:#1B1A18
+    classDef optional fill:#C8A876,stroke:#1B1A18,stroke-width:1.5px,color:#1B1A18
 
     class A,B,C,D process
     class E data
@@ -175,7 +175,7 @@ flowchart TD
 
 ### Qualitative vs Quantitative Workflows
 
-These workflows strike a balance between qualitative insights and quantitative analysis. The emphasis on qualitative aspects might necessitate the inclusion of thematic mapping, with sampling strategies reflecting the depth of qualitative analysis desired. Conversely, projects leaning towards quantitative analysis, using topic modelling as a classifier, will prioritise the evaluation component, dedicating substantial effort to validate the model's effectiveness. The blue node indicates a component that is auxiliary, optional, and may be replaced. In some cases, we use classifiers like keywords to refine the content of heterogeneous topics; however, the choice of classifiers varies depending on the complexity of the topic. We could also use zero-shot or layered topic modelling to dissect the data further until we reach a homogeneous level. See [`docs/layered/`](../layered/).
+These workflows strike a balance between qualitative insights and quantitative analysis. The emphasis on qualitative aspects might necessitate the inclusion of thematic mapping, with sampling strategies reflecting the depth of qualitative analysis desired. Conversely, projects leaning towards quantitative analysis, using topic modelling as a classifier, will prioritise the evaluation component, dedicating substantial effort to validate the model's effectiveness. The gold node indicates a component that is auxiliary, optional, and may be replaced. In some cases, we use classifiers like keywords to refine the content of heterogeneous topics; however, the choice of classifiers varies depending on the complexity of the topic. We could also use zero-shot or layered topic modelling to dissect the data further until we reach a homogeneous level. See [`docs/layered/`](../layered/).
 
 ```mermaid
 flowchart TD
@@ -186,16 +186,14 @@ flowchart TD
     C --> D[Topic Modeling]
     D --> E[Storage]
     E --> F[Thematic Mapping]
-    CL[Classifiers]:::auxiliary --> F
+    CL[Classifiers]:::optional --> F
     F --> G[Evaluation]
 
     classDef process fill:#ffffff,stroke:#1B1A18,stroke-width:1.5px,color:#1B1A18
     classDef data fill:#F4EFE5,stroke:#1B1A18,stroke-width:1.5px,color:#1B1A18
-    classDef optional fill:#d9d9d9,stroke:#1B1A18,stroke-width:1.5px,color:#1B1A18
-    classDef auxiliary fill:#7EB6D4,stroke:#1B1A18,stroke-width:1.5px,color:#1B1A18
+    classDef optional fill:#C8A876,stroke:#1B1A18,stroke-width:1.5px,color:#1B1A18
 
     class A,B,C,D,F,G process
     class E data
-    class H optional
-    class CL auxiliary
+    class H,CL optional
 ```
