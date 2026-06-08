@@ -69,13 +69,13 @@ This concept of soft clustering, facilitated by the membership vector, accommoda
 
 ### How the -1 Cluster Forms
 
-The -1 cluster arises from HDBSCAN's density threshold: points that do not meet the minimum density requirements to belong to any identified cluster are labelled -1. Five factors govern this:
+In HDBSCAN, the -1 cluster represents outliers or data points that do not fit well into any identified clusters. The formation of the -1 cluster is influenced by the density-based approach of HDBSCAN, which inherently distinguishes between core points, border points, and outliers. Five factors govern how points end up in -1:
 
-1. **Density reachability threshold** — points that do not reach the density threshold for any dense region are assigned to -1, regardless of their proximity to clusters.
-2. **Sparse regions** — points in areas where density falls below the threshold are more likely to be labelled outliers. These regions may contain genuine discussions but lack the critical mass to form a recognised cluster.
-3. **Connectivity to core points** — a point's connectivity within the MST matters. If it lacks sufficient connections to core points, it is designated as an outlier even if thematically related to a cluster.
-4. **Cluster shape flexibility** — because HDBSCAN identifies clusters of arbitrary shape, outlier classification is not purely geometric. The algorithm adapts to local density variations, meaning points can be outliers even when geometrically close to a cluster if local density is low.
-5. **Parameter influence** — `min_cluster_size` and related parameters directly control how many points fall into -1. A larger minimum cluster size produces more -1 messages; a smaller one allows smaller clusters to form, reducing -1 but potentially fragmenting meaningful topics.
+1. **Density reachability threshold** — HDBSCAN uses a density reachability threshold to determine whether a point is part of a dense region. Points that do not meet this threshold are considered outliers and are assigned to the -1 cluster.
+2. **Outliers in sparse regions** — points situated in sparse regions of the dataset, where the density is below the defined threshold, are more likely to be labelled as outliers. These regions may represent areas with lower data density, where traditional clustering algorithms might struggle to identify meaningful clusters.
+3. **Connectivity to core points** — the connectivity of a point to core points within the minimum spanning tree plays a role. If a point does not have sufficient connections to core points, it is more likely to be designated as an outlier.
+4. **Flexibility in cluster shapes** — the flexibility of HDBSCAN to identify clusters of various shapes means that outliers are not solely determined by geometric considerations. Instead, the algorithm adapts to local density variations, making it effective in capturing outliers in complex datasets.
+5. **Influence of parameters** — the formation of the -1 cluster is also influenced by the parameters set during execution, such as the minimum cluster size and other density-related parameters. Adjusting these parameters can impact the identification of outliers: a larger minimum cluster size produces more -1 messages; a smaller one allows smaller clusters to form, reducing -1 but potentially fragmenting meaningful topics.
 
 ---
 
