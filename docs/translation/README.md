@@ -166,9 +166,9 @@ An analysis was conducted on a random selection of 30 sentences under varying co
 | 4864 | He winked at me. | Sorrowful to me. | 0.128 | 0.906 |
 | 4868 | Life is still ahead of you. | Life is still ahead of you. | 0.998 | 1.000 |
 
-### Topic model results (Stage 2)
+### Topic model results (Stage 2 and 3)
 
-BERTopic topic counts across the three setups:
+Topic modelling was carried out under three distinct setups: Arabic content, English gold standard, and translated content. BERTopic partitioned the data as follows:
 
 | Setup | Topics found |
 |---|---|
@@ -176,23 +176,89 @@ BERTopic topic counts across the three setups:
 | English gold standard | 69 |
 | Arabic content | 64 |
 
-Topic counts are similar across setups, indicating the translation preserves enough content structure for the topic model to find comparable granularity.
+For annotations, the top 10 topics and bottom 5 from each setup were selected to analyse, describe the content within each topic, and provide a descriptive summary.
 
-### Homogeneity results (Stage 3)
+**Translation topic model (Figure 3):**
 
-| Setup | Heterogeneous topics | % of annotated topics |
+5 topics (30%) are heterogeneous, exhibiting high entropy values, while the remainder are homogeneous.
+
+| topic_id | entropy | description | homogeneity |
+|---|---|---|---|
+| 0 | 0.183122 | Cost | 4.8 |
+| 1 | 0.869996 | Date Mix | 4 |
+| 2 | 0.426229 | Peace Making | 4.5 |
+| 3 | **1.410848** | Mix | 0 |
+| 4 | 0.353359 | Letter | 4.9 |
+| 5 | 0.000000 | Human Rights | 5 |
+| 6 | 0.566510 | Law | 5 |
+| 7 | **1.038921** | Phrase Group | 2 |
+| 8 | **1.295836** | History | 1 |
+| 9 | **1.263809** | Jobs | 1 |
+| 61 | **0.918296** | Paragraph | 2 |
+| 62 | 0.000000 | United Nations | 5 |
+| 63 | 0.000000 | Mix | 3 |
+| 64 | 0.000000 | International Law | 5 |
+| 65 | 0.000000 | International Conference | 4.7 |
+
+**English gold standard topic model (Figure 4):**
+
+A single heterogeneous topic (6%) with high entropy, while the rest are homogeneous.
+
+| topic_id | entropy | description | homogeneity |
+|---|---|---|---|
+| 0 | 0.000000 | Committee | 5 |
+| 1 | 0.000000 | United Nation | 4.8 |
+| 2 | 0.000000 | Human Rights | 5 |
+| 3 | 0.000000 | Law | 5 |
+| 4 | 0.000000 | Resolution | 5 |
+| 5 | 0.000000 | Geopolitical | 4 |
+| 6 | 0.000000 | Environment | 4.5 |
+| 7 | **1.314320** | Services | 2 |
+| 8 | 0.000000 | Cost | 5 |
+| 9 | 0.000000 | Women | 5 |
+| 63 | 0.000000 | Phrase Group | 5 |
+| 64 | 0.000000 | Space Program | 5 |
+| 65 | 0.000000 | Phrase Group | 5 |
+| 66 | 0.000000 | Financial Report | 5 |
+| 67 | 0.000000 | Russia | 5 |
+
+**Arabic content topic model (Figure 5):**
+
+Similar to the English model: one heterogeneous topic (6%) marked by high entropy, while the rest are homogeneous. Notably, there are four topics with relatively higher entropy values compared to others — topics 1, 3, 6, and 7 — though not high enough to be classified as heterogeneous.
+
+| topic_id | entropy | description | homogeneity |
+|---|---|---|---|
+| 0 | 0.000000 | Cost | 5 |
+| 1 | 0.266765 | Peace Keeping | 4.8 |
+| 2 | 0.000000 | Law | 4 |
+| 3 | 0.286397 | Women Issues | 5 |
+| 4 | 0.000000 | Human Rights | 4.9 |
+| 5 | 0.000000 | Date Mix | 4 |
+| 6 | 0.543564 | Supply | 4 |
+| 7 | 0.337290 | Management | 3 |
+| 8 | 0.000000 | Economy | 5 |
+| 9 | **1.505823** | Committee | 2 |
+| 58 | 0.000000 | Phrase Group | 5 |
+| 59 | 0.000000 | Phrase Group | 5 |
+| 60 | 0.000000 | Era | 5 |
+| 61 | 0.000000 | Resolution | 5 |
+| 62 | 0.000000 | Phrase Group | 5 |
+
+**Summary:**
+
+| Setup | Heterogeneous topics | % of annotated |
 |---|---|---|
-| English translation | 5 out of ~15 annotated | **30%** |
-| English gold standard | 1 out of ~15 annotated | 6% |
-| Arabic content | 1 out of ~15 annotated | 6% |
+| English translation | 5 / 15 | **30%** |
+| English gold standard | 1 / 15 | 6% |
+| Arabic content | 1 / 15 | 6% |
 
-The translation setup produces more heterogeneous topics than either the English gold standard or the Arabic content directly. The English and Arabic models perform equivalently — suggesting that with high-quality multilingual representation, direct Arabic clustering is as good as English gold-standard clustering.
-
-The translation setup introduces a meaningful homogeneity penalty: approximately 1 in 3 topics is heterogeneous, compared to 1 in 15 for the other setups. This is the primary finding: **translate-then-cluster works, but at a homogeneity cost relative to ideal conditions.**
+In conclusion, from a homogeneity perspective, the topic models for English and Arabic content appear to be more homogeneous, yet the translation topic model also succeeds in producing reasonably homogeneous topics.
 
 ### Shared topic discussions (Table 1)
 
-Despite the homogeneity difference, all three setups identify overlapping thematic content:
+Regarding the similarity of discussions across each setup, the table below showcases the identified descriptions. Each topic model shares similar discussions — Cost, Human Rights, Law, and noise such as Phrase Group. However, each model also has unique descriptions that, while related, are not directly linked to one another: Committee, Peace Keeping, Peace Making, Management, and Jobs. This suggests that the translation data was effective in generating descriptions closely aligned with those in the English and Arabic content, ensuring coherence.
+
+It is important to note that the objective is not to precisely reconstruct the Arabic or English content — these serve to provide context — but to assess whether applying topic modelling on the translation can generate meaningful clusters, and to ascertain the extent to which they closely resemble the Arabic ones.
 
 | Translation | English gold | Arabic |
 |---|---|---|
@@ -210,8 +276,6 @@ Despite the homogeneity difference, all three setups identify overlapping themat
 | Mix | Services | Supply |
 | Phrase Group | Phrase Group | Phrase Group |
 | Date Mix | Space Program | Date Mix |
-
-Shared discussions across all three setups include Cost, Human Rights, Law, Resolution/Committee, and Phrase Group (noise). Each setup also generates unique or distinct topic labels — Peace Making (translation) vs Russia (English gold) vs Peace Keeping (Arabic) — which are related but not directly equivalent. This indicates the translation successfully preserves thematic structure at a high level, while differing in the granularity of how sub-topics are separated.
 
 ### Named entity and number handling
 
