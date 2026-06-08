@@ -205,23 +205,21 @@ See [`docs/annotation/`](../annotation/) for the full scheme. Note that its effe
 
 ### Evaluation
 
-See [`docs/evaluation/`](../evaluation/) for a description of the current evaluation procedure and proposed approaches.
+See [`docs/evaluation/`](../evaluation/) for a description of the current evaluation procedure and proposed approaches. The evaluation strategy can be divided into two aspects: evaluation procedure/mode and evaluation approach.
 
-The evaluation strategy divides into two dimensions: procedure/mode and approach.
+1. **Evaluation necessity based on project nature**
+   - The need for evaluation depends significantly on the project's nature. For exploratory projects aimed at qualitatively identifying interesting discussions, evaluation may not be essential. However, this approach requires transparent communication with the client to align expectations.
+   - For projects with quantitative goals that involve breaking down data into measurable segments, evaluation becomes crucial to validate the accuracy and reliability of the data breakdown.
 
-**Evaluation necessity based on project nature:**
-- Exploratory/qualitative projects may not require formal evaluation, but this requires transparent communication with the client
-- Quantitative projects that break data into measurable segments require evaluation to validate accuracy
+2. **Evaluation procedure and modes**
+   - The evaluation process can take various forms: general evaluation, stratified evaluation, theme or relevancy evaluation, and sub-theme evaluation. The choice between these depends on specific project needs — the focus area within the topic theme map and the balance of data. See [`docs/annotation/`](../annotation/) for details on each mode.
+   - For balanced themes, a general sample that mirrors the theme's presence in the overall dataset is often sufficient. The process becomes more complex with imbalanced themes or when the focus is on specific sub-themes — in these cases, stratified sampling is recommended to ensure fairness and precision in themes that are less represented but hold more analytical interest.
 
-**Evaluation modes:**
-- General evaluation, stratified evaluation, theme/relevancy evaluation, sub-theme evaluation
-- For balanced themes, a general sample mirroring theme presence in the overall dataset is often sufficient
-- For imbalanced themes or specific sub-themes, stratified sampling is recommended
-
-**Evaluation approaches:**
-- *Review-based:* annotators see the topic model annotations and agree or disagree
-- *Blind-based:* annotators evaluate without access to topic model annotations, reducing potential bias
-- *Combined:* divides the evaluation sample into a validation set (review-based) and a test set (blind-based) — untested but proposed
+3. **Evaluation approaches**
+   - Existing evaluation approaches can be broadly categorised into review-based and blind-based:
+     - *Review-based evaluation:* annotators see the topic model annotations and either agree or disagree with them. This approach is faster but risks anchoring bias.
+     - *Blind-based evaluation:* annotators evaluate the model without access to the topic model annotations, reducing potential bias. Used in projects where independence between annotation and model output is important.
+   - *Combined approach:* a new, yet untested, strategy involves dividing the evaluation sample into a validation set (review-based) and a test set (blind-based). This aims to leverage the strengths of both approaches.
 
 ---
 
