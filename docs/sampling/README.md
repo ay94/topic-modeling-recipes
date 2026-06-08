@@ -111,7 +111,7 @@ Divide the unseen data into batches approximately the same size as the training 
 ## Decision Guide
 
 ```mermaid
-flowchart TD
+flowchart LR
     A([Large dataset\n> 500K documents]) --> B["Train topic model\non sample\n~100K–200K"]
     B --> C["Annotate topics\nfrom training run"]
     C --> D{Embedding\ninfrastructure\navailable?}

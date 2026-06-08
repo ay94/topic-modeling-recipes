@@ -48,7 +48,7 @@ Two implementations are available depending on the use case. One approach is **S
 ### SetFit
 
 ```mermaid
-flowchart TD
+flowchart LR
     subgraph SN["SetFit notebook"]
         A[["Pre-processed\ndata"]] --> C["SetFit\nfine-tuning"]
         B(["HF hub\nSentence Transformer"]) --> C
@@ -60,7 +60,7 @@ flowchart TD
 ### Contrastive learning
 
 ```mermaid
-flowchart TD
+flowchart LR
     subgraph CL["Contrastive learning notebook"]
         A[["Pre-processed\nlabelled data"]] --> B["Pair generation\npositive · negative"]
         E(["Base Sentence\nTransformer"]) --> C

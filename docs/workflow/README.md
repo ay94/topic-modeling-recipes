@@ -248,6 +248,23 @@ Evaluating a topic theme map requires testing whether annotation generalises to 
 
 ---
 
+## Implementation Notebooks
+
+Ready-to-run Colab notebooks implementing the full workflow are in the [`multilingual-topic-modeling`](https://github.com/ay94/multilingual-topic-modeling) library:
+
+| Notebook | Stage |
+|---|---|
+| [`notebooks/workflow/00_preprocessing.ipynb`](https://github.com/ay94/multilingual-topic-modeling/blob/main/notebooks/workflow/00_preprocessing.ipynb) | Cleaning, language filtering, deduplication |
+| [`notebooks/workflow/01_topic_model.ipynb`](https://github.com/ay94/multilingual-topic-modeling/blob/main/notebooks/workflow/01_topic_model.ipynb) | Embedding, parameter tuning, BERTopic, annotation sample |
+| [`notebooks/workflow/02_topic_theme_map.ipynb`](https://github.com/ay94/multilingual-topic-modeling/blob/main/notebooks/workflow/02_topic_theme_map.ipynb) | Applying the topic theme map, evaluation sample |
+| [`notebooks/workflow/03_evaluation.ipynb`](https://github.com/ay94/multilingual-topic-modeling/blob/main/notebooks/workflow/03_evaluation.ipynb) | Precision / recall / F1 at theme and sub-theme level |
+
+Each notebook is self-contained: it installs the library, mounts Google Drive, and documents its own inputs and outputs. See the repo README for setup instructions.
+
+For outlier mitigation specifically, see [`notebooks/outlier_mitigation_demo.ipynb`](https://github.com/ay94/multilingual-topic-modeling/blob/main/notebooks/outlier_mitigation_demo.ipynb) — a standalone demo using the 20 Newsgroups dataset that requires no external data.
+
+---
+
 ## Cross-references
 
 | Topic | Where to look |

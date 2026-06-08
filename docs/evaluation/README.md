@@ -11,7 +11,7 @@ How to assess the performance of thematic allocation — what modes to use, when
 ## Evaluation Workflow
 
 ```mermaid
-flowchart TD
+flowchart LR
     A([Annotated data ready]) --> P1
 
     subgraph Phase1["Phase 1 — Subtheme validation"]
