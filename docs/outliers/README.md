@@ -102,37 +102,69 @@ The clustering approach in BERTopic classifies topics into two types: **core top
 
 ### Approach
 
-The soft clustering approach leverages the membership vector to reassign -1 messages to one or more core topics. The `SoftReclusterer` is applied once BERTopic is trained and membership vectors are extracted. It is governed by four parameters:
+The soft clustering approach is designed to leverage the **distribution** of membership vectors to assign messages labelled as -1 to one or more core topics based on specific criteria. The `SoftReclusterer` is applied once BERTopic is trained and membership vectors are extracted. It is governed by four parameters:
 
-| Parameter | Description |
-|---|---|
-| `min_membership_score` | Minimum membership score required for a point to be considered part of a cluster |
-| `max_core_clusters` | Maximum number of core clusters a point can be assigned to (e.g. up to 5) |
-| `min_fringe_cluster_size` | Minimum number of points required to validate a fringe cluster; below this threshold the group is treated as an outlier |
-| `threshold_ratio` | Determines the membership score threshold relative to the maximum score in the vector |
+- **`min_membership_score`** — Minimum membership score required for a point to be considered part of a cluster.
+- **`max_core_clusters`** — Maximum number of core clusters to consider for a point. For instance, a point can only be assigned to up to 5 core clusters to be considered a fringe of those 5.
+- **`min_fringe_cluster_size`** — Minimum number of points in a fringe cluster to validate it as a valid fringe cluster. If there are fewer than 5 messages, it is considered an outlier.
+- **`threshold_ratio`** — The ratio used to determine the number of clusters a message can be a part of:
+  - This parameter is used to determine the maximum membership score of a cluster to be considered a fringe cluster for a given point.
+  - When `method='ratio'`, the threshold is calculated by multiplying the maximum value in the membership vector by `threshold_ratio`.
+  - For example, if the maximum value in the vector is 0.6 and `threshold_ratio` is 0.5, the threshold is 0.3 — any cluster with a membership score ≥ 0.3 is considered a fringe cluster for that point.
+  - This ratio is useful to ensure the maximum is not very close to the next closest distribution (i.e. when variability is high).
 
-**On `threshold_ratio`:** when `method='ratio'`, the threshold is `max_membership_score × threshold_ratio`. For example, if the maximum score in the vector is 0.6 and the ratio is 0.5, the threshold is 0.3 — any cluster with a score ≥ 0.3 qualifies as a fringe assignment for that point. This prevents assignments when scores are closely bunched, ensuring fringe assignments reflect genuine secondary membership rather than noise in the vector.
-
-The result is a fringe breakdown: -1 messages are reassigned to one or more core topics based on these criteria, with residual messages that do not meet the thresholds remaining as true outliers.
+Once BERTopic is trained and the membership vectors are extracted, the `SoftReclusterer` is utilised to provide the fringe breakdown. It takes into account the parameters above to determine the fringe clusters. Overall, this approach offers an overview of the reassignment of messages labelled as -1 to core topics based on the distribution of membership vectors and specific criteria.
 
 ---
 
 ### Observations
 
+As discussed, this section covers three types of observations:
+
+- Overall observations of the approach
+- Observations about the fringe topic
+- Observations about the outlier cluster
+
 #### General
 
-1. **Relevance within topics** — fringe topic discussions are generally centred around one or more core topics. No instances were observed where fringe topics contained messages entirely outside the scope of the identified core topics.
-2. **Obscurity** — some messages within fringe topics are occasionally obscure or lack sufficient information. Despite this, domain experts can recognise and contextualise them without difficulty.
-3. **Proximity to most probable topic** — messages close to the fringe tend to align with their most probable core topic rather than exhibiting balanced membership across several. The primary association dominates even when secondary scores exist.
-4. **Persisting parameter challenges** — the chosen ratio and hyperparameters still produce a significant proportion of residual outliers. Further tuning is necessary to balance inclusion and quality.
-5. **Increased control** — despite these challenges, working with membership vectors offers more control and interpretability than adjusting UMAP or HDBSCAN parameters directly. The effect of parameter changes is more predictable and auditable.
+1. **Relevance within topics**
+   - a. Fringe topic discussions are generally centred around one of the core topics or span across multiple topics.
+   - b. There have been no instances where fringe topics contain messages completely outside the scope of the identified topics.
+
+2. **Obscurity and information content**
+   - a. Some messages within fringe topics are occasionally obscure or lack sufficient information.
+   - b. Despite potential obscurity, domain experts can easily capture and recognise that.
+
+3. **Proximity to most probable topic**
+   - a. Messages that are close to the fringe often align with the most probable topic rather than exhibiting balanced membership across several.
+
+4. **Persisting challenges**
+   - a. The current approach still faces challenges, particularly in terms of the chosen ratio and hyperparameters.
+   - b. The identified ratio and hyperparameters have led to the creation of numerous outliers.
+   - c. Further tweaking of these parameters is necessary for improved results.
+
+5. **Increased control over hyperparameters**
+   - a. Despite the persistence of challenges, the current approach offers more control over hyperparameters compared to adjusting UMAP or HDBSCAN parameters directly.
+   - b. This increased control eases the refinement of the results and increases the inclusion of the data.
 
 #### Fringe Topics
 
-1. **Association with core topics** — fringe topics are predominantly associated with one core topic. It was rare to observe fringe topics without a clear primary core association, even when secondary associations existed.
-2. **Homogeneity** — messages within a fringe topic typically share common themes and context, indicating the algorithm successfully groups relevant discussions. Fringe topics tend to explore specific nuances or sub-topics of a core rather than mixing unrelated content.
-3. **Multiplicity of associations** — contrary to initial expectations, the majority of fringe topics align primarily with one core topic rather than spanning multiple. Multi-core associations are more apparent to domain experts through qualitative review than through the membership scores alone. Instances of genuine multi-core fringe topics were infrequent, suggesting that -1 is normally a fringe of one topic rather than multiple.
-4. **Differentiation from outliers** — fringe topics are distinguishable from true outliers: fringe topics have a clear primary core association, while the residual outlier cluster lacks any coherent theme across its messages.
+The following are the observations identified based on the fringe cluster analysis:
+
+1. **Association with core topics**
+   - a. A consistent pattern emerged where fringe topics were predominantly associated with one of the core topics identified by HDBSCAN. It was rare to find fringe topics that did not exhibit a clear association with a specific core topic.
+
+2. **Homogeneity and core topic relationship**
+   - a. The homogeneity within fringe topics was reasonably satisfactory. Messages within a fringe topic typically shared common themes and context, indicating the algorithm successfully grouped relevant discussions.
+   - b. Further analysis revealed that fringe topics were often distinctive from core topics. While core topics encapsulated more central and widely discussed themes, fringe topics delved into specific nuances or subtopics related to a particular core.
+
+3. **Multiplicity of core topic associations**
+   - a. Contrary to expectations, fringe topics were not exclusively tied to multiple core topics. The majority demonstrated a more straightforward relationship, primarily aligning with one core topic. Qualitatively, domain experts can observe the multiplicity that the membership scores alone do not fully capture.
+   - b. Instances where a fringe topic spanned multiple core topics were infrequent, suggesting that -1 is normally a fringe of one topic rather than multiple.
+
+4. **Differentiation from outliers**
+   - a. The analysis provided clarity on the differentiation between true fringe topics and outliers. Outliers are a collection of discussions without a clear theme.
+   - b. Fringe topics may represent elements of the discourse that are less conventional or more subjective, adding a layer of diversity to the overall analysis.
 
 #### Outlier Cluster
 
@@ -142,21 +174,23 @@ The residual outlier cluster — messages that remain -1 after soft clustering �
 
 ### Pros
 
-**Methodological control**
-Working with membership vectors is more interpretable than adjusting UMAP or HDBSCAN parameters. The effect of changing `min_membership_score` or `threshold_ratio` is directly observable in the fringe assignments, making iterative refinement more tractable.
+1. **Methodological control**
+   - a. This approach provides more control over the outlier cluster because working with membership vectors is far more interpretable compared to adjusting UMAP or HDBSCAN parameters directly.
 
-**Analytical value of fringe topics**
-Fringe topics often capture interdisciplinary discussions that span multiple core areas — content that is frequently valuable precisely because it crosses thematic boundaries. Soft clustering also improves recall: -1 is not always noise. Recovering fringe discussions that genuinely belong near a core increases the proportion of data available for analysis and can potentially improve thematic coverage.
+2. **Analytical usefulness**
+   - a. The incorporation of fringe topics can add to the analytical framework because analysts are often interested in interdisciplinary topics that discuss various aspects.
+   - b. It also captures more nuanced granular analysis which can potentially improve recall: as discussed, -1 is not always noise — it can be a fringe discussion that may or may not be of interest.
 
 ---
 
 ### Cons
 
-**Parameter tuning overhead**
-The soft clusterer requires careful hyperparameter tuning. Poorly chosen parameters produce a large residual outlier cluster, and rapid evaluation of parameters is essential to avoid repeated annotation effort and minimise overhead.
+1. **Methodological complexity**
+   - a. Despite providing more control, the method still requires parameter tweaking, as the soft clusterer generates a significant proportion of outliers.
+   - b. Rapid evaluation of hyperparameters is crucial to avoid repetitive annotation efforts and minimise overhead.
 
-**Increased annotation load**
-Fringe topics increase the total number of topics an annotator must review. Each fringe cluster requires description and assessment, adding steps to the annotation process.
+2. **Annotation complexity**
+   - a. The addition of fringe topics increases the number of topics an annotator must go through, necessitating additional steps in the annotation process.
 
 ---
 
