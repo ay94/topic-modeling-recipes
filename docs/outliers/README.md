@@ -81,17 +81,20 @@ In HDBSCAN, the -1 cluster represents outliers or data points that do not fit we
 
 ## Mitigation Approaches
 
-Two approaches are investigated to reduce the proportion of -1 messages and recover analytical value from them:
+The clustering approach in BERTopic classifies topics into two types: **core topics** (dense areas identified by HDBSCAN) and the **fringe topic (-1)**, encompassing messages that don't fall within or close to any dense areas. Each message is assigned a membership vector indicating a probability distribution over all topics. Two approaches are investigated to mitigate the presence of -1:
 
-1. **Soft clustering** — uses the HDBSCAN membership vector to assign -1 messages to one or more core topics based on configurable score thresholds.
-2. **K-means** — applies k-means clustering to the -1 messages in isolation, using the number of HDBSCAN core topics as k.
+1. **Soft clustering** — utilises the membership vector to assign -1 messages to one or multiple topics, up to 5 topics, based on specific criteria (discussed in the next section).
+2. **K-means:**
+   - Unlike density-based approaches, k-means assigns each message to one of the specified buckets (identified by k).
+   - HDBSCAN is initially applied to identify the number of dense areas. Given that the -1 topic often reflects the structure of the entire data (as shown in Figure 1), k-means is applied solely to the -1 cluster, using the same number of dense areas discovered by HDBSCAN as k.
 
 **Sampling and analysis strategy (both approaches):**
 - Sample from the topic breakdown in each output
 - Annotate the resulting topics
-- Analyse relationships between fringe topics and core topics
-- Determine whether fringe topics sit genuinely at the periphery of cores or represent true noise
+- Analyse relationships between fringe topics and core topics to determine whether fringe topics are genuinely on the periphery between various cores and assess the utility of outliers in this setup
 - For k-means: conduct a comparative analysis against the soft clustering output to reveal whether k-means provides a distinct perspective on the data
+
+**Dataset:** A domain-specific economic dataset was used for this investigation. This dataset was selected because of familiarity with the domain, enabling domain expert analysis of the results.
 
 ---
 
