@@ -10,6 +10,8 @@ This document covers:
 > **Cross-references:**
 > - Core pipeline and HDBSCAN parameters: [`docs/workflow/`](../workflow/)
 > - Annotation methodology: [`docs/annotation/`](../annotation/)
+> - Implementation: [`multilingual-topic-modeling`](https://github.com/ay94/multilingual-topic-modeling) — `multilingual_topic/outlier_mitigation.py` (`SoftReclusterer`, `StaticReducer`, `StaticClusterer`)
+> - Demo notebook: [`notebooks/outlier_mitigation_demo.ipynb`](https://github.com/ay94/multilingual-topic-modeling/blob/main/notebooks/outlier_mitigation_demo.ipynb)
 
 ---
 
@@ -102,7 +104,7 @@ The clustering approach in BERTopic classifies topics into two types: **core top
 
 ### Approach
 
-The soft clustering approach is designed to leverage the **distribution** of membership vectors to assign messages labelled as -1 to one or more core topics based on specific criteria. The `SoftReclusterer` is applied once BERTopic is trained and membership vectors are extracted. It is governed by four parameters:
+The soft clustering approach is designed to leverage the **distribution** of membership vectors to assign messages labelled as -1 to one or more core topics based on specific criteria. The `SoftReclusterer` is applied once BERTopic is trained and membership vectors are extracted. Implementation: [`multilingual_topic/outlier_mitigation.py`](https://github.com/ay94/multilingual-topic-modeling/blob/main/multilingual_topic/outlier_mitigation.py). It is governed by four parameters:
 
 - **`min_membership_score`** — Minimum membership score required for a point to be considered part of a cluster.
 - **`max_core_clusters`** — Maximum number of core clusters to consider for a point. For instance, a point can only be assigned to up to 5 core clusters to be considered a fringe of those 5.
