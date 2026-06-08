@@ -2,13 +2,13 @@
 
 ## Overview
 
-The objective is to examine whether machine-translated English can support meaningful topic clustering on non-English source data — to an extent where the core message of the original text is retained in the topic structure.
+The objective of this study is to examine the capability of a machine translation tool in accurately translating Arabic text into English, to an extent where the core message of the original text is retained. The translated English is then clustered to find common topics, and those topics are applied back to the Arabic text to assess whether they make sense in the original language. In other words, we are clustering the Arabic text based on the content of its English translation, not its original content.
 
 The **traditional approach** to topic allocation on non-English data: given an analyst studying a multilingual dataset, apply clustering directly to the non-English content using a multilingual representation model, then provide the analyst with the data breakdown.
 
 The **proposed approach**: given a dataset that is not in English, rather than applying clustering to the non-English data using multilingual representation, translate the data into English, apply clustering to the translations, and then provide the analyst with the *original non-English data* broken down by translation-derived topics. The translation is not seen by the analyst — it operates under the hood.
 
-This approach has practical advantages: English-language topic models are more mature, better-calibrated, and produce more interpretable keyword representations. The question is whether the translation step introduces enough noise to degrade topic homogeneity.
+The outcome of this study should show how well the translated English is producing homogeneous topics compared to the standard English approach applied in previous projects.
 
 ---
 
