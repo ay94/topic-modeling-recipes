@@ -287,6 +287,26 @@ This is consistent with the overall finding: translation noise affects surface f
 
 ---
 
+## Task-specific considerations
+
+### Topic modelling
+
+Translation errors that affect topic modelling most are those on *defining characteristics* of the text — entity names and theme-specific vocabulary. A translation error on a named entity (e.g. an organisation or country name) causes mentions of that entity to scatter across topics rather than cluster together. Similarly, a key thematic word mistranslated consistently will either create a spurious topic or dilute an existing one.
+
+The BERTScore / METEOR divergence observed in Stage 1 is directly relevant here: METEOR penalises paraphrases, but BERTScore does not. For topic modelling, BERTScore is the more meaningful metric — semantic content is what drives clustering, not exact surface form. A translation that achieves BERTScore > 0.92 is likely to produce consistent topic representations even if METEOR is moderate.
+
+Practical implication: translations that consistently mistranslate named entities (e.g. "Jamal" → "Beauty") will cause cross-document clustering failures specifically for entity-heavy topics, even when the surrounding text is well translated.
+
+### NER (Named Entity Recognition)
+
+When NER runs on translated text, translation errors on entity spans produce two failure modes:
+- **Missed entity** — the entity name is lost or altered beyond recognition; the NER model cannot detect a span
+- **Incorrect entity type** — the translation produces a common noun ("Beauty") where a proper noun ("Jamal") was expected; NER assigns the wrong type or misses it
+
+Both reduce the recall of cross-language entity extraction. The practical workaround is to run NER on the *source* text where a source-language NER model exists, and carry entity annotations through to the translated layer rather than re-running NER on the translation.
+
+---
+
 ## When to use this approach
 
 **Use translate-then-cluster when:**
