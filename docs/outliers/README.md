@@ -196,7 +196,7 @@ The residual outlier cluster — messages that remain -1 after soft clustering �
 
 ## K-Means Comparison
 
-K-means was applied to the -1 cluster in isolation, with k set equal to the number of core topics identified by HDBSCAN. The rationale: since the -1 cluster takes the same shape as the full data (Figure 1), applying k-means with the same number of groups as HDBSCAN found provides a direct structural comparison of what each approach discovers within the outlier space.
+K-means was applied to the messages assigned to the -1 cluster, with k set equal to the number of topics identified by HDBSCAN. The rationale: since the -1 cluster takes the same shape as the full data (Figure 1), applying k-means with the same number of groups as HDBSCAN found provides a direct structural comparison of what each approach discovers within the outlier space. The objective is to compare and contrast the findings of k-means with the results obtained from the soft clustering approach, particularly focusing on common and distinct topics. Additionally, the aim is to determine whether k-means presents a unique perspective on the data in comparison to the fringe and outlier clusters.
 
 ### Findings
 
@@ -218,7 +218,7 @@ Several topics appeared in both outputs but with different emphasis or granulari
 
 ### Conclusion
 
-K-means applied to the -1 cluster contributes complementary insights rather than duplicating soft clustering findings. Commonalities indicate robustness in identifying broad thematic groupings within the outlier space. Unique k-means findings suggest it recovers patterns that remain in the soft clustering residual outlier cluster — the two approaches are more complementary than redundant.
+K-means applied to the -1 cluster contributes complementary insights rather than duplicating soft clustering findings. Commonalities indicate robustness in identifying broad thematic groupings within the outlier space. Unique k-means findings suggest it recovers patterns that remain in the soft clustering residual outlier cluster (probably corresponding to the outliers in the soft clusterer) — the two approaches are more complementary than redundant.
 
 K-means is simpler to apply and requires no membership vector tuning, but provides less interpretable and less nuanced assignments. Soft clustering provides richer analytical structure but demands more tuning effort. Using both in combination — soft clustering for nuanced recovery, k-means for structural validation — is a viable strategy where annotation resource allows.
 
