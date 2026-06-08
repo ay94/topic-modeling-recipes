@@ -153,11 +153,19 @@ Full evaluation methodology: [`docs/evaluation/`](../evaluation/).
 
 ## Outcomes
 
-| Project type | Primary use of the map |
-|---|---|
-| **Exploratory** (qualitative analysis, disinfo) | Navigational tool — surfaces patterns, trends, and narratives for in-depth qualitative examination |
-| **Filtering** (large datasets, initial scoping) | Filter — identifies and isolates topics of interest; makes large datasets manageable |
-| **Classification** | Classification scheme — assigns messages to predefined themes; evaluation is essential |
+The outcomes are highly dependent on the specific objectives and nature of each project. This flexibility allows the methodology to be adapted to a wide range of analytical needs.
+
+### Exploratory projects
+
+In projects aimed at exploring a dataset — such as those focused on qualitative analysis or narrative discovery — the topic theme map serves as a **navigational tool**. It guides analysts through the dataset, enabling in-depth qualitative examination of specific content areas. The thematic breakdown helps uncover underlying patterns, trends, and narratives, which is particularly valuable when the analytical questions are not fully defined in advance and the dataset needs to be understood before more targeted work can begin.
+
+### Large datasets requiring initial filtering
+
+For projects dealing with large volumes of data where exhaustive manual review is not feasible, the topic theme map acts as a **filtration tool**. Analysts use it to identify and select specific topics of interest for further detailed analysis, making the dataset more manageable and focusing effort on the areas most relevant to the project's objectives. This use case is common in projects where the dataset spans many themes and only a subset is analytically relevant.
+
+### Classification projects
+
+In projects where the primary goal is to classify a collection of messages into predefined categories, the topic theme map functions as a **classification scheme** — assigning messages to themes and sub-themes at scale. In this context, an evaluation stage is essential to assess how effectively the map generalises beyond the annotated sample to all messages in the dataset. See [`docs/evaluation/`](../evaluation/) for the full evaluation methodology.
 
 ---
 
