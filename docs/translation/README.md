@@ -305,6 +305,54 @@ When NER runs on translated text, translation errors on entity spans produce two
 
 Both reduce the recall of cross-language entity extraction. The practical workaround is to run NER on the *source* text where a source-language NER model exists, and carry entity annotations through to the translated layer rather than re-running NER on the translation.
 
+#### Model selection — CoNLL-2003 and commercial licensing
+
+Many of the models scoped and selected for NER are fine-tuned on CoNLL-2003. While the licences for the base models are generally suited for commercial use, the CoNLL-2003 dataset licence is ambiguous — the NER annotations are based on 1996 Reuters articles, which carry a research and development restriction. The section below makes the case that models fine-tuned on CoNLL-2003 are nonetheless usable for commercial work, based on how these models are licensed and deployed in practice.
+
+**HuggingFace models — CoNLL-2003 fine-tuned with permissive licence:**
+
+| Licence | Model |
+|---|---|
+| MIT | [dslim/bert-base-NER](https://huggingface.co/dslim/bert-base-NER) |
+| MIT | [dslim/bert-large-NER](https://huggingface.co/dslim/bert-large-NER) |
+| MIT | [Jean-Baptiste/roberta-large-ner-english](https://huggingface.co/Jean-Baptiste/roberta-large-ner-english) |
+| Apache 2.0 | [elastic/distilbert-base-cased-finetuned-conll03-english](https://huggingface.co/elastic/distilbert-base-cased-finetuned-conll03-english) |
+| Apache 2.0 | [Jorgeutd/bert-large-uncased-finetuned-ner](https://huggingface.co/Jorgeutd/bert-large-uncased-finetuned-ner) |
+| Apache 2.0 | [philschmid/distilroberta-base-ner-conll2003](https://huggingface.co/philschmid/distilroberta-base-ner-conll2003) |
+| Apache 2.0 | [sileod/deberta-v3-base-tasksource-nli](https://huggingface.co/sileod/deberta-v3-base-tasksource-nli) |
+| AFL 3.0 | [Davlan/distilbert-base-multilingual-cased-ner-hrl](https://huggingface.co/Davlan/distilbert-base-multilingual-cased-ner-hrl) |
+
+Note: [xlm-roberta-large-finetuned-conll03-english](https://huggingface.co/xlm-roberta-large-finetuned-conll03-english) (HuggingFace) does not specify a licence — treat as unlicensed until clarified.
+
+**Licence commercial use summary:**
+
+| Licence | Commercial use |
+|---|---|
+| MIT | Yes |
+| Apache 2.0 | Yes |
+| AFL 3.0 | Yes |
+| GPL 3.0 | Yes |
+| CC BY-NC-SA 4.0 | **No** |
+
+**Evidence of commercial use of CoNLL-2003 fine-tuned models:**
+- [Deep Infra](https://deepinfra.com/Jean-Baptiste/roberta-large-ner-english/versions) — paid API access to an MIT-licensed model fine-tuned on CoNLL-2003
+- [Weaviate NER module](https://weaviate.io/developers/weaviate/modules/reader-generator-modules/ner-transformers) — paid service offering NER using models fine-tuned on CoNLL-2003; their documentation states: *"Compatible with various models, each with their own license. For detailed information, please review the license of the model you are using in the Hugging Face Model Hub. It is your responsibility to evaluate whether the terms of its license(s), if any, are appropriate for your intended use."*
+
+**CoNLL-2003 licensing detail:**
+
+The dataset is not explicitly licensed for commercial use — the annotation was created from Reuters Corpus articles, whose copyright is held by Reuters Ltd / Thomson Reuters. The Reuters Corpus is available for *research purposes* only (requires signed organisational and individual agreements with NIST).
+
+| Source | Licence status |
+|---|---|
+| [Papers with Code](https://paperswithcode.com/dataset/conll-2003) | Unknown |
+| [HuggingFace datasets/conll2003](https://huggingface.co/datasets/conll2003) | Unknown |
+| [tner/conll2003](https://huggingface.co/datasets/tner/conll2003) | Unknown |
+| [Original dataset page](https://www.cnts.ua.ac.be/conll2003/ner/) | Research only (Reuters restriction) |
+
+The CoNLL-2003 shared task page states: *"Because of copyright reasons we only make available the annotations. In order to build the complete data sets you will need access to the Reuters Corpus. It can be obtained for research purposes without any charge from NIST."*
+
+**Practical position:** The permissive licences (MIT, Apache 2.0, AFL 3.0) on the fine-tuned model weights themselves are the operative licence for the deployed model artefact. The widespread commercial deployment of these models (paid APIs, commercial NER services) suggests the industry treats the fine-tuned model weights as separable from the training data licence. That said, for work where IP risk needs to be minimised, prefer models whose authors explicitly state commercial suitability, or models fine-tuned on non-Reuters corpora. Do not rely solely on the model card licence without verifying that all training data licences are consistent with it.
+
 ---
 
 ## When to use this approach
